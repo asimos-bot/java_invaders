@@ -47,19 +47,17 @@ public class SpaceEntity {
     }
     void draw(){
 
-        Vector2 currentPosition = body.getPosition();
-        float[] currentVerticesCoordinates = shape.clone();
-        System.out.println(Arrays.toString(shape));
-        for(int i=0; i < currentVerticesCoordinates.length; i+=2){
-            currentVerticesCoordinates[i]+=currentPosition.x;
-            currentVerticesCoordinates[i]+=currentPosition.y;
-        }
-        System.out.println(Arrays.toString(shape));
-
+        //get a ShapeRenderer
         ShapeRenderer shapeRenderer = new ShapeRenderer();
+        //draw only countor lines
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        //white lines
         shapeRenderer.setColor(1,1,1,1);
-        shapeRenderer.polygon(currentVerticesCoordinates);
+        //draw here
+        shapeRenderer.translate(body.getPosition().x, body.getPosition().y, 0);
+        //with this shape
+        shapeRenderer.polygon(shape);
+        //that's it
         shapeRenderer.end();
     }
 }
