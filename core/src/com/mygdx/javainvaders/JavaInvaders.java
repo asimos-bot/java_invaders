@@ -13,9 +13,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class JavaInvaders extends ApplicationAdapter {
 
-	//camera
-	private OrthographicCamera camera;
-
 	//Box2D
 	private World world; //box2d world object (handle the physics interactions in our game)
 
@@ -24,12 +21,6 @@ public class JavaInvaders extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-
-		//camera
-		camera = new OrthographicCamera(30,
-				30 * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
-		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.update();
 
 		//set clear color
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -43,24 +34,16 @@ public class JavaInvaders extends ApplicationAdapter {
 				Gdx.graphics.getWidth()/2f,
 				Gdx.graphics.getHeight()/2f);
 		float[] vertices = { -10,-4f , 0,17f , 10,-4f , 0,-2f };
-		spaceship.setFixtures(vertices, 0.5f, 0.5f, 0.5f);
+		spaceship.setFixtures(vertices, 0.1f, 0.5f, 0.5f);
 	}
 
 	@Override
 	public void render () {
-		//update camera
-		camera.update();
 
 		//clear screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
-		if( Gdx.input.isTouched() ){
-			System.out.println("x:" + Gdx.input.getX() + ", y:" + Gdx.input.getY());
-		}
-		//
-		spaceship.rotate(200000000);
-		spaceship.draw();
+		spaceship.update();
 
 		//tell box2D to do its calculations
 		world.step(1/60f, 6, 2);
