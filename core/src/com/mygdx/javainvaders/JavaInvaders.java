@@ -17,15 +17,17 @@ public class JavaInvaders extends ApplicationAdapter {
 	private OrthographicCamera camera;
 
 	//Box2D
-	private World world; //box2d world object
+	private World world; //box2d world object (handle the physics interactions in our game)
 
-	private SpaceEntity spaceship;
+	//entities
+	private Spaceship spaceship;
 
 	@Override
 	public void create () {
 
 		//camera
-		camera = new OrthographicCamera();
+		camera = new OrthographicCamera(30,
+				30 * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.update();
 
@@ -37,26 +39,30 @@ public class JavaInvaders extends ApplicationAdapter {
 		world = new World(new Vector2(0,0), true); //set world object (will do the physiscs)
 
 		//create spaceship
-		spaceship = new SpaceEntity(world,
+		spaceship = new Spaceship(world,
 				Gdx.graphics.getWidth()/2f,
 				Gdx.graphics.getHeight()/2f);
-		float[] vertices = { 0,0 , 10,3 , 20,0 , 10, 20 };
+		float[] vertices = { -10,-4f , 0,17f , 10,-4f , 0,-2f };
 		spaceship.setFixtures(vertices, 0.5f, 0.5f, 0.5f);
 	}
 
 	@Override
 	public void render () {
+		//update camera
 		camera.update();
-		if( Gdx.input.isTouched() ){
-			System.out.println("x:" + Gdx.input.getX() + ", y:" + Gdx.input.getY());
-		}
+
 		//clear screen
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		//render bounding boxes
+
+		if( Gdx.input.isTouched() ){
+			System.out.println("x:" + Gdx.input.getX() + ", y:" + Gdx.input.getY());
+		}
+		//
+		spaceship.rotate(200000000);
 		spaceship.draw();
 
-		//tell box2D to step
+		//tell box2D to do its calculations
 		world.step(1/60f, 6, 2);
 	}
 	

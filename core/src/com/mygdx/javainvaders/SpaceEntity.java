@@ -12,10 +12,10 @@ import java.util.Arrays;
 
 public class SpaceEntity {
 
-    private Body body;
-    private float[] shape;
+    protected Body body;
+    protected float[] shape;
 
-    SpaceEntity(World world, float initialX, float initialY){
+    protected SpaceEntity(World world, float initialX, float initialY){
 
         //create body definition
         BodyDef bodyDef = new BodyDef(); //create
@@ -26,7 +26,7 @@ public class SpaceEntity {
         body = world.createBody(bodyDef);
     }
 
-    void setFixtures(float[] vertices, float density, float friction, float restitution){
+    protected void setFixtures(float[] vertices, float density, float friction, float restitution){
 
         shape = vertices;
 
@@ -45,7 +45,8 @@ public class SpaceEntity {
 
         entityShape.dispose();
     }
-    void draw(){
+
+    protected void draw(){
 
         //get a ShapeRenderer
         ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -54,10 +55,16 @@ public class SpaceEntity {
         //white lines
         shapeRenderer.setColor(1,1,1,1);
         //draw here
-        shapeRenderer.translate(body.getPosition().x, body.getPosition().y, 0);
+        shapeRenderer.translate(body.getWorldCenter().x, body.getWorldCenter().y, 0);
+        //draw in the right orientation
+        shapeRenderer.rotate(0, 0, 1, body.getAngle());
         //with this shape
         shapeRenderer.polygon(shape);
         //that's it
         shapeRenderer.end();
+    }
+
+    protected void rotate(float angularImpulse){
+        body.applyAngularImpulse(angularImpulse, true);
     }
 }
