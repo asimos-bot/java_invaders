@@ -54,7 +54,7 @@ public class SpaceEntity {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         //white lines
         shapeRenderer.setColor(1,1,1,1);
-        //draw here
+        //draw here (get center of our polygon, where point 0,0 is)
         shapeRenderer.translate(body.getWorldCenter().x, body.getWorldCenter().y, 0);
         //draw in the right orientation
         shapeRenderer.rotate(0, 0, 1, body.getAngle());
@@ -64,7 +64,7 @@ public class SpaceEntity {
         shapeRenderer.end();
     }
 
-    protected void rotate(float angularImpulse){
-        body.applyAngularImpulse(angularImpulse, true);
+    protected void rotate(float angularVelocity){
+        body.setAngularVelocity(angularVelocity);
     }
 }
