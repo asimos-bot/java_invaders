@@ -91,8 +91,7 @@ public class AsteroidGenerator {
 
         for(Asteroid asteroid : asteroids){
 
-            asteroid.draw();
-            System.out.println( asteroid.body.getPosition().toString() );
+            asteroid.draw();;
         }
     }
 }

@@ -49,7 +49,7 @@ public class JavaInvaders extends ApplicationAdapter {
                 5,
                 100,
                 new Vector2(4, 8),
-                new Vector2(20, 200)
+                new Vector2(20, 50)
         );
 	}
 
