@@ -47,7 +47,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
 		asteroidGenerator = new AsteroidGenerator(world,
                 5,
-                100,
+                2000,
                 new Vector2(4, 8),
                 new Vector2(20, 50)
         );

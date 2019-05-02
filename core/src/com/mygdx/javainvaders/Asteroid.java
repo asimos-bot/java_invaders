@@ -3,9 +3,9 @@ package com.mygdx.javainvaders;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
-import sun.security.provider.certpath.Vertex;
-
 public class Asteroid extends SpaceEntity {
+
+    private float highestVertexHeight=0;
 
     Asteroid(World world, float initialX, float initialY, int numVertices, float minVertexHeight, float maxVertextHeight){
         super(world, initialX, initialY);
@@ -35,7 +35,7 @@ public class Asteroid extends SpaceEntity {
 
         float currentAngle = 0;
 
-        float VertexMagnitude=0;
+        float vertexMagnitude=0;
         float previousVertextMagnitude=0;
 
         //if previous vertex magnitude was less than the one before if
@@ -46,27 +46,29 @@ public class Asteroid extends SpaceEntity {
         for(int i=0; i < numCoordinates; i+=2){
 
             //save previous vertex's magnitude
-            previousVertextMagnitude = VertexMagnitude;
+            previousVertextMagnitude = vertexMagnitude;
 
             //we need to be careful with this vector (else we end up with a valley )
             if( valleyAlert ){
                 //the minimal magnitude will be the previous vector magnitude
 
-                VertexMagnitude = Helper.randFloatRange( VertexMagnitude, maxVertexHeight );
+                vertexMagnitude = Helper.randFloatRange( vertexMagnitude, maxVertexHeight );
                 valleyAlert = false;
             }else{
 
                 //get vertice's vector magnitude
-                VertexMagnitude = Helper.randFloatRange( minVertexHeight, maxVertexHeight );
+                vertexMagnitude = Helper.randFloatRange( minVertexHeight, maxVertexHeight );
             }
 
-            if( VertexMagnitude < previousVertextMagnitude ) valleyAlert = true;
+            if( vertexMagnitude < previousVertextMagnitude ) valleyAlert = true;
 
             //decompose vector and get x
-            vertices[i] = (float) Math.cos( currentAngle ) * VertexMagnitude;
+            vertices[i] = (float) Math.cos( currentAngle ) * vertexMagnitude;
 
             //decompose vector and get y
-            vertices[i+1] = (float) Math.sin( currentAngle ) * VertexMagnitude;
+            vertices[i+1] = (float) Math.sin( currentAngle ) * vertexMagnitude;
+
+            if( vertexMagnitude > highestVertexHeight ) highestVertexHeight = vertexMagnitude;
 
             currentAngle -= AngleBetweenVertices;
         }
@@ -99,5 +101,9 @@ public class Asteroid extends SpaceEntity {
     void pushTowards(Vector2 point, float force){
 
         push(point.sub( body.getWorldCenter() ).setLength(force));
+    }
+
+    float getHighestVertexHeight(){
+        return highestVertexHeight;
     }
 }

@@ -6,8 +6,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Spaceship extends SpaceEntity {
 
-    private float throttle = 2500;
-    private float angularVelocity = 2.2f;
+    static float throttle = 2500;
+    static float angularVelocity = 2.2f;
 
     //just call SpaceEntity class constructor
     Spaceship(World world, float initialX, float initialY){
