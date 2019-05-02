@@ -3,13 +3,11 @@ package com.mygdx.javainvaders;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
+import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
 public class JavaInvaders extends ApplicationAdapter {
 
@@ -18,6 +16,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
 	//entities
 	private Spaceship spaceship;
+	private Asteroid asteroid;
 
 	@Override
 	public void create () {
@@ -34,7 +33,11 @@ public class JavaInvaders extends ApplicationAdapter {
 				Gdx.graphics.getWidth()/2f,
 				Gdx.graphics.getHeight()/2f);
 		float[] vertices = { -10,-4f , 0,17f , 10,-4f , 0,-2f };
-		spaceship.setFixtures(vertices, 0.1f, 0.5f, 0.5f);
+		spaceship.setFixtures(vertices, 0.1f, 0.5f, 1f);
+
+		asteroid = new Asteroid(world, 50, 50);
+		asteroid.defineAsteroid( 8, 80, 20 );
+		asteroid.pushAsteroid( 100000,100000 );
 	}
 
 	@Override
@@ -44,6 +47,7 @@ public class JavaInvaders extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		spaceship.update();
+		asteroid.draw();
 
 		//tell box2D to do its calculations
 		world.step(1/60f, 6, 2);
