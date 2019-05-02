@@ -47,9 +47,8 @@ public class JavaInvaders extends ApplicationAdapter {
 		float[] vertices = { -5,10 , 20,0 , -5,-10 , -3,0 };
 		spaceship.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
 
-		asteroid = new Asteroid(world, 50, 50);
-		asteroid.defineAsteroid( 8, 80, 20 );
-		asteroid.pushAsteroid( 100000,100000 );
+		asteroid = new Asteroid(world, 50, 50, 8, 200, 20);
+		asteroid.push( 100000,100000 );
 	}
 
 	@Override

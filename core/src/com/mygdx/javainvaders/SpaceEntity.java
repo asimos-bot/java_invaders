@@ -1,6 +1,7 @@
 package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -21,6 +22,10 @@ public class SpaceEntity {
 
         //create our body definition in the world
         body = world.createBody(bodyDef);
+    }
+    protected SpaceEntity(World world, Vector2 initialPosition){
+
+        this( world, initialPosition.x, initialPosition.y );
     }
 
     protected void setFixtures(float[] vertices, float density, float friction, float restitution){

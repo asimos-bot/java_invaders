@@ -1,20 +1,28 @@
 package com.mygdx.javainvaders;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import sun.security.provider.certpath.Vertex;
 
 public class Asteroid extends SpaceEntity {
 
-    Asteroid(World world, float initialX, float initialY){
+    Asteroid(World world, float initialX, float initialY, int numVertices, float minVertexHeight, float maxVertextHeight){
         super(world, initialX, initialY);
         body.setAngularDamping(0); //spinning for daaaaaaaays
         body.setLinearDamping(0);
+
+        defineAsteroid( numVertices, minVertexHeight, maxVertextHeight );
+    }
+    Asteroid(World world, Vector2 initialPosition, int numVertices, Vector2 verticesHeightRanges){
+
+        this( world, initialPosition.x, initialPosition.y, numVertices, verticesHeightRanges.x, verticesHeightRanges.y );
     }
 
     void defineAsteroid(int numVertices, float minVertexHeight, float maxVertexHeight){
 
         if( numVertices < 3 ) numVertices = 3;
+        if( numVertices > 8 ) numVertices = 8;
         if( minVertexHeight < 0 ) minVertexHeight = 0;
 
         int numCoordinates = numVertices*2;
@@ -43,14 +51,13 @@ public class Asteroid extends SpaceEntity {
             //we need to be careful with this vector (else we end up with a valley )
             if( valleyAlert ){
                 //the minimal magnitude will be the previous vector magnitude
-                float minVertexHeightValleyAlert = VertexMagnitude;
 
-                VertexMagnitude = (float) (minVertexHeightValleyAlert + Math.random() * (maxVertexHeight - minVertexHeightValleyAlert));
+                VertexMagnitude = Helper.randFloatRange( VertexMagnitude, maxVertexHeight );
                 valleyAlert = false;
             }else{
 
                 //get vertice's vector magnitude
-                VertexMagnitude = (float) (minVertexHeight + Math.random() * (maxVertexHeight - minVertexHeight));
+                VertexMagnitude = Helper.randFloatRange( minVertexHeight, maxVertexHeight );
             }
 
             if( VertexMagnitude < previousVertextMagnitude ) valleyAlert = true;
@@ -68,7 +75,7 @@ public class Asteroid extends SpaceEntity {
         setFixtures( vertices, 0.5f, 0.5f, 1f );
     }
 
-    void launchAsteroid(float positionX, float positionY, float forceX, float forceY, float torque){
+    void launch(float positionX, float positionY, float forceX, float forceY, float torque){
 
         //set position
         body.setTransform( positionX, positionY, body.getAngle() );
@@ -80,8 +87,8 @@ public class Asteroid extends SpaceEntity {
         rotate( torque );
     }
 
-    void pushAsteroid(float forceX, float forceY){
+    void push(float forceX, float forceY){
 
-        launchAsteroid( body.getPosition().x, body.getPosition().y, forceX, forceY, body.getAngularVelocity() );
+        launch( body.getPosition().x, body.getPosition().y, forceX, forceY, body.getAngularVelocity() );
     }
 }
