@@ -6,6 +6,8 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Asteroid extends SpaceEntity {
 
     private float highestVertexHeight=0;
+    private float lowestVertexHeight=Float.MAX_VALUE;
+    private int generationsLeft = 3;
 
     Asteroid(World world, float initialX, float initialY, int numVertices, float minVertexHeight, float maxVertextHeight){
         super(world, initialX, initialY);
@@ -69,6 +71,7 @@ public class Asteroid extends SpaceEntity {
             vertices[i+1] = (float) Math.sin( currentAngle ) * vertexMagnitude;
 
             if( vertexMagnitude > highestVertexHeight ) highestVertexHeight = vertexMagnitude;
+            if( vertexMagnitude < lowestVertexHeight ) lowestVertexHeight = vertexMagnitude;
 
             currentAngle -= AngleBetweenVertices;
         }
@@ -106,4 +109,6 @@ public class Asteroid extends SpaceEntity {
     float getHighestVertexHeight(){
         return highestVertexHeight;
     }
+    float getLowestVertexHeight(){ return lowestVertexHeight; }
+
 }

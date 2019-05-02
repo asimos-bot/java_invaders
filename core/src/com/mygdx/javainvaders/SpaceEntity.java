@@ -64,6 +64,8 @@ public class SpaceEntity {
         shapeRenderer.polygon(shape);
         //that's it
         shapeRenderer.end();
+
+        shapeRenderer.dispose();
     }
 
     protected void rotate(float angularVelocity){

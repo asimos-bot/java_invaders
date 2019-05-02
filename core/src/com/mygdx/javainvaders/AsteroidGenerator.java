@@ -12,8 +12,6 @@ public class AsteroidGenerator {
 
     private World world;
     private Set<Asteroid> asteroids = new HashSet<Asteroid>();
-    private long timeGapBetweenLaunches;
-    private long lastTimeCheck;
     private int maxNumAsteroids;
     private Vector2 numVerticesRanges;
     private Vector2 verticesHeightRanges;
@@ -23,11 +21,8 @@ public class AsteroidGenerator {
         //save configs for our asteroids
         this.world = world;
         this.maxNumAsteroids = maxNumAsteroids;
-        this.timeGapBetweenLaunches = timeGapBetweenLaunches;
         this.numVerticesRanges = numVerticesRanges;
         this.verticesHeightRanges = verticesHeightRanges;
-
-        this.lastTimeCheck = System.currentTimeMillis();
     }
 
     private Vector2 getRandomOriginPoint(float MaxHeightRange){
@@ -90,17 +85,14 @@ public class AsteroidGenerator {
             world.destroyBody( asteroidToRemove.body );
 
             removeAsteroids(asteroidsToRemove);
-            System.out.println("asteroid deleted!");
         }
     }
 
     void update(){
 
-        if( System.currentTimeMillis() - lastTimeCheck > timeGapBetweenLaunches && asteroids.size() < maxNumAsteroids ){
+        if( asteroids.size() < maxNumAsteroids ){
 
             launchNewAsteroid();
-            lastTimeCheck = System.currentTimeMillis();
-            System.out.println("new asteroid launched!");
         }
 
         ArrayList<Asteroid> asteroidsToRemove = new ArrayList<Asteroid>();

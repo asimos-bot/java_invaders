@@ -76,5 +76,6 @@ public class JavaInvaders extends ApplicationAdapter {
 
 		//free memory
 		world.dispose();
+		debugRenderer.dispose();
 	}
 }
