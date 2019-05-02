@@ -11,16 +11,18 @@ public class AsteroidGenerator {
 
     private World world;
     private Set<Asteroid> asteroids = new HashSet<Asteroid>();
-    private int frameGapBetweenLaunches;
-    private int frameCounter = 0;
+    private int gapBetweenLaunches;
+    private int counter = 0;
+    private int maxNumAsteroids;
     private Vector2 numVerticesRanges;
     private Vector2 verticesHeightRanges;
 
-    AsteroidGenerator(World world, int frameGapBetweenLaunches, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
+    AsteroidGenerator(World world, int maxNumAsteroids, int gapBetweenLaunches, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
 
         //save configs for our asteroids
         this.world = world;
-        this.frameGapBetweenLaunches = frameGapBetweenLaunches;
+        this.maxNumAsteroids = maxNumAsteroids;
+        this.gapBetweenLaunches = gapBetweenLaunches;
         this.numVerticesRanges = numVerticesRanges;
         this.verticesHeightRanges = verticesHeightRanges;
     }
@@ -73,12 +75,24 @@ public class AsteroidGenerator {
         Vector2 originPoint = getRandomOriginPoint(randomMaxHeightRange);
 
         Asteroid newAsteroid = new Asteroid( world, originPoint.x, originPoint.y, numVertices, randomMinHeightRange, randomMaxHeightRange );
-     //   newAsteroid.push(  );
+        newAsteroid.pushTowards( new Vector2( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 ), 10e6f );
+
+        asteroids.add(newAsteroid);
     }
     void update(){
 
+        counter++; //update counter
+        if( counter == gapBetweenLaunches && asteroids.size() < maxNumAsteroids ){
 
+            System.out.println("new asteroid launched!");
+            counter=0;
+            launchNewAsteroid();
+        }
 
+        for(Asteroid asteroid : asteroids){
 
+            asteroid.draw();
+            System.out.println( asteroid.body.getPosition().toString() );
+        }
     }
 }

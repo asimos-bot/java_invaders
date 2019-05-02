@@ -91,4 +91,13 @@ public class Asteroid extends SpaceEntity {
 
         launch( body.getPosition().x, body.getPosition().y, forceX, forceY, body.getAngularVelocity() );
     }
+    void push(Vector2 force){
+
+        push(force.x, force.y);
+    }
+
+    void pushTowards(Vector2 point, float force){
+
+        push(point.sub( body.getWorldCenter() ).setLength(force));
+    }
 }

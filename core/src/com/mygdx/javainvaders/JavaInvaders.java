@@ -8,8 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
-import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
 public class JavaInvaders extends ApplicationAdapter {
 
@@ -18,7 +16,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
 	//entities
 	private Spaceship spaceship;
-	private Asteroid asteroid;
+	private AsteroidGenerator asteroidGenerator;
 
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
@@ -47,8 +45,12 @@ public class JavaInvaders extends ApplicationAdapter {
 		float[] vertices = { -5,10 , 20,0 , -5,-10 , -3,0 };
 		spaceship.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
 
-		asteroid = new Asteroid(world, 50, 50, 8, 200, 20);
-		asteroid.push( 100000,100000 );
+		asteroidGenerator = new AsteroidGenerator(world,
+                5,
+                100,
+                new Vector2(4, 8),
+                new Vector2(20, 200)
+        );
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class JavaInvaders extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		spaceship.update();
-		asteroid.draw();
+		asteroidGenerator.update();
 
 		//debug
 		debugRenderer.render(world, camera.combined);

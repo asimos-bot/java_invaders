@@ -13,7 +13,7 @@ public class Spaceship extends SpaceEntity {
     Spaceship(World world, float initialX, float initialY){
         super(world, initialX, initialY);
         body.setAngularDamping(3); //how long it takes to stop the rotation basically
-        body.setLinearDamping(0.5f);
+        body.setLinearDamping(0.1f);
     }
 
     //handles input to spaceship control and draws it
