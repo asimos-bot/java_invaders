@@ -2,6 +2,8 @@ package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.physics.box2d.World;
 
+import sun.security.provider.certpath.Vertex;
+
 public class Asteroid extends SpaceEntity {
 
     Asteroid(World world, float initialX, float initialY){
@@ -35,8 +37,23 @@ public class Asteroid extends SpaceEntity {
 
         for(int i=0; i < numCoordinates; i+=2){
 
-            //get vertice's vector magnitude
-            VertexMagnitude = (float) (minVertexHeight + Math.random() * (maxVertexHeight - minVertexHeight));
+            //save previous vertex's magnitude
+            previousVertextMagnitude = VertexMagnitude;
+
+            //we need to be careful with this vector (else we end up with a valley )
+            if( valleyAlert ){
+                //the minimal magnitude will be the previous vector magnitude
+                float minVertexHeightValleyAlert = VertexMagnitude;
+
+                VertexMagnitude = (float) (minVertexHeightValleyAlert + Math.random() * (maxVertexHeight - minVertexHeightValleyAlert));
+                valleyAlert = false;
+            }else{
+
+                //get vertice's vector magnitude
+                VertexMagnitude = (float) (minVertexHeight + Math.random() * (maxVertexHeight - minVertexHeight));
+            }
+
+            if( VertexMagnitude < previousVertextMagnitude ) valleyAlert = true;
 
             //decompose vector and get x
             vertices[i] = (float) Math.cos( currentAngle ) * VertexMagnitude;
