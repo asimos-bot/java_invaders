@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public class Spaceship extends SpaceEntity {
 
     private float throttle = 2500;
-    private float angularVelocity = 10000;
+    private float angularVelocity = 2.5f;
 
     //just call SpaceEntity class constructor
     Spaceship(World world, float initialX, float initialY){
@@ -20,8 +20,8 @@ public class Spaceship extends SpaceEntity {
         //goes forward
         if( Gdx.input.isKeyPressed(Input.Keys.UP) ){
             body.applyForceToCenter(
-                    (float)Math.cos(Math.toRadians( body.getAngle()+90 )) * throttle,
-                    (float)Math.sin(Math.toRadians( body.getAngle()+90 )) * throttle,
+                    (float)Math.cos( body.getAngle() ) * throttle,
+                    (float)Math.sin( body.getAngle() ) * throttle,
                     true
             );
         }

@@ -52,9 +52,9 @@ public class SpaceEntity {
         //white lines
         shapeRenderer.setColor(1,1,1,1);
         //draw here (get center of our polygon, where point 0,0 is)
-        shapeRenderer.translate(body.getWorldCenter().x, body.getWorldCenter().y, 0);
+        shapeRenderer.translate(body.getPosition().x, body.getPosition().y, 0);
         //draw in the right orientation
-        shapeRenderer.rotate(0, 0, 1, body.getAngle());
+        shapeRenderer.rotate(0, 0, 1, (float)Math.toDegrees( (double)body.getAngle() ) );
         //with this shape
         shapeRenderer.polygon(shape);
         //that's it
