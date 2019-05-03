@@ -10,7 +10,7 @@ public class Asteroid extends SpaceEntity {
     private float highestVertexHeight=0;
     private float lowestVertexHeight=Float.MAX_VALUE;
     private int numVertices;
-    int generationsLeft = 3;
+    public int generationsLeft = 3;
 
     Asteroid(World world, float initialX, float initialY, int numVertices, float minVertexHeight, float maxVertextHeight){
 

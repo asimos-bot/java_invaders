@@ -15,6 +15,7 @@ public class AsteroidGenerator {
     private int maxNumAsteroids;
     private Vector2 numVerticesRanges;
     private Vector2 verticesHeightRanges;
+    private int youngestGeneration = Integer.MAX_VALUE;
 
     AsteroidGenerator(World world, int maxNumAsteroids, long timeGapBetweenLaunches, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
 
@@ -95,6 +96,8 @@ public class AsteroidGenerator {
             Asteroid asteroidToAdd = asteroidsToAdd.remove(0);
             asteroids.add(asteroidToAdd);
             addAsteroids(asteroidsToAdd);
+
+            if( asteroidToAdd.generationsLeft < youngestGeneration ) youngestGeneration = asteroidToAdd.generationsLeft;
         }
     }
 
@@ -109,18 +112,26 @@ public class AsteroidGenerator {
         ArrayList<Asteroid> asteroidsToRemove = new ArrayList<Asteroid>();
         ArrayList<Asteroid> asteroidsToAdd = new ArrayList<Asteroid>();
 
+        //reset
+        if( asteroids.size() > maxNumAsteroids ){
+            youngestGeneration = Integer.MAX_VALUE;
+        }
+
         for(Asteroid asteroid : asteroids){
 
             //put asteroid to be removed if it is offscreen
-            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 ) ){
+            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 ) ||
+                    //overpopulation not good
+                    maxNumAsteroids < asteroids.size() - asteroidsToRemove.size() && asteroid.generationsLeft == youngestGeneration ){
 
                 asteroidsToRemove.add( asteroid );
 
             }else{
 
+                //see if asteroid is dead an should split
                 if( asteroid.getHealth() < 0 ){
 
-                    ArrayList<Asteroid> childs = asteroid.split(3, 1);
+                    ArrayList<Asteroid> childs = asteroid.split(3, 10);
 
                     asteroidsToRemove.add( asteroid );
 
@@ -128,6 +139,11 @@ public class AsteroidGenerator {
 
                     for(Asteroid child : childs) asteroidsToAdd.add(child);
                 }else{
+
+                    //if we have a overpopulation of asteroids, start seeking the younger ones to kill
+                    if( asteroids.size() > maxNumAsteroids && asteroid.generationsLeft < youngestGeneration ){
+                        youngestGeneration = asteroid.generationsLeft;
+                    }
 
                     asteroid.draw();
                 }

@@ -54,6 +54,9 @@ public class Spaceship extends SpaceEntity {
     }
 
     void update(){
+
+        if( health < 0 ) System.out.println("you are dead");
+
         inputHandling();
         borderTeletransportation();
         draw();
