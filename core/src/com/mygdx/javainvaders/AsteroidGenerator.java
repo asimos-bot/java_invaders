@@ -71,7 +71,7 @@ public class AsteroidGenerator {
 
         newAsteroid.body.setTransform( originPoint.x, originPoint.y, newAsteroid.body.getAngle() );
 
-        newAsteroid.pushTowards( new Vector2( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 ), 10e6f );
+        newAsteroid.pushTowards( new Vector2( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 ), 10e7f );
 
         asteroids.add(newAsteroid);
     }
@@ -88,6 +88,17 @@ public class AsteroidGenerator {
         }
     }
 
+    private void addAsteroids(ArrayList<Asteroid> asteroidsToAdd){
+
+        if( asteroidsToAdd.size() > 0 ){
+
+            Asteroid asteroidToAdd = asteroidsToAdd.remove(0);
+            asteroids.add(asteroidToAdd);
+            addAsteroids(asteroidsToAdd);
+        }
+    }
+
+
     void update(){
 
         if( asteroids.size() < maxNumAsteroids ){
@@ -96,6 +107,7 @@ public class AsteroidGenerator {
         }
 
         ArrayList<Asteroid> asteroidsToRemove = new ArrayList<Asteroid>();
+        ArrayList<Asteroid> asteroidsToAdd = new ArrayList<Asteroid>();
 
         for(Asteroid asteroid : asteroids){
 
@@ -106,10 +118,23 @@ public class AsteroidGenerator {
 
             }else{
 
-                asteroid.draw();
+                if( asteroid.getHealth() < 0 ){
+
+                    ArrayList<Asteroid> childs = asteroid.split(3, 1);
+
+                    asteroidsToRemove.add( asteroid );
+
+                    if( childs == null ) continue;
+
+                    for(Asteroid child : childs) asteroidsToAdd.add(child);
+                }else{
+
+                    asteroid.draw();
+                }
             }
         }
 
         removeAsteroids( asteroidsToRemove );
+        addAsteroids( asteroidsToAdd );
     }
 }

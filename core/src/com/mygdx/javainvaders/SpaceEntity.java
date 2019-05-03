@@ -12,6 +12,7 @@ public class SpaceEntity {
 
     protected Body body;
     protected float[] shape;
+    protected float health;
 
     protected SpaceEntity(World world, float initialX, float initialY){
 
@@ -22,6 +23,9 @@ public class SpaceEntity {
 
         //create our body definition in the world
         body = world.createBody(bodyDef);
+        body.setUserData(this);
+
+        health = body.getMass() * 2;
     }
     protected SpaceEntity(World world, Vector2 initialPosition){
 
@@ -67,6 +71,7 @@ public class SpaceEntity {
 
         shapeRenderer.dispose();
     }
+    float getHealth(){ return health; }
 
     protected void rotate(float angularVelocity){
         body.setAngularVelocity(angularVelocity);

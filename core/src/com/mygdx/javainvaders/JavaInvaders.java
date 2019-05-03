@@ -5,8 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class JavaInvaders extends ApplicationAdapter {
@@ -48,9 +53,41 @@ public class JavaInvaders extends ApplicationAdapter {
 		asteroidGenerator = new AsteroidGenerator(world,
                 5,
                 2000,
-                new Vector2(4, 8),
-                new Vector2(20, 50)
+                new Vector2(6, 8),
+                new Vector2(30, 100)
         );
+
+		world.setContactListener(new ContactListener() {
+			@Override
+			public void beginContact(Contact contact) {
+
+				Body bodyA = contact.getFixtureA().getBody();
+                Body bodyB = contact.getFixtureB().getBody();
+
+                float damage = contact.getWorldManifold().getNormal().len2();
+
+                SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
+                SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
+
+                EntityA.health -= damage;
+                EntityB.health -= damage;
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+
+			}
+		});
 	}
 
 	@Override
@@ -65,7 +102,7 @@ public class JavaInvaders extends ApplicationAdapter {
 		asteroidGenerator.update();
 
 		//debug
-		debugRenderer.render(world, camera.combined);
+		//debugRenderer.render(world, camera.combined);
 
 		//tell box2D to do its calculations
 		world.step(1/60f, 6, 2);
