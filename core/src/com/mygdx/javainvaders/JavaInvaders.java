@@ -5,11 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
-import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 
 public class JavaInvaders extends ApplicationAdapter {
 
@@ -18,7 +21,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
 	//entities
 	private Spaceship spaceship;
-	private Asteroid asteroid;
+	private AsteroidGenerator asteroidGenerator;
 
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
@@ -47,9 +50,44 @@ public class JavaInvaders extends ApplicationAdapter {
 		float[] vertices = { -5,10 , 20,0 , -5,-10 , -3,0 };
 		spaceship.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
 
-		asteroid = new Asteroid(world, 50, 50);
-		asteroid.defineAsteroid( 8, 80, 20 );
-		asteroid.pushAsteroid( 100000,100000 );
+		asteroidGenerator = new AsteroidGenerator(world,
+                5,
+                2000,
+                new Vector2(6, 8),
+                new Vector2(30, 100)
+        );
+
+		world.setContactListener(new ContactListener() {
+			@Override
+			public void beginContact(Contact contact) {
+
+				Body bodyA = contact.getFixtureA().getBody();
+                Body bodyB = contact.getFixtureB().getBody();
+
+                float damage = contact.getWorldManifold().getNormal().len2();
+
+                SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
+                SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
+
+                EntityA.health -= damage;
+                EntityB.health -= damage;
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+
+			}
+		});
 	}
 
 	@Override
@@ -61,10 +99,10 @@ public class JavaInvaders extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		spaceship.update();
-		asteroid.draw();
+		asteroidGenerator.update();
 
 		//debug
-		debugRenderer.render(world, camera.combined);
+		//debugRenderer.render(world, camera.combined);
 
 		//tell box2D to do its calculations
 		world.step(1/60f, 6, 2);
@@ -75,5 +113,6 @@ public class JavaInvaders extends ApplicationAdapter {
 
 		//free memory
 		world.dispose();
+		debugRenderer.dispose();
 	}
 }
