@@ -34,18 +34,18 @@ public class JavaInvaders extends ApplicationAdapter {
         // camera and renderers
         camera = new OrthographicCamera(64, 48);
         camera.translate(camera.viewportWidth/2, camera.viewportHeight/2);
-        camera.zoom += 0f;
+//        camera.zoom += 10f;
         debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
         shapeRenderer = new ShapeRenderer();
 
         spaceship = new Spaceship(world, camera.viewportWidth/2, camera.viewportHeight/2);
-        asteroid = new Asteroid(world, 20, 20);
-        asteroid.defineAsteroid(8, 3f, 12f);
+        asteroid = new Asteroid(world, 20, 20, 8, 2f, 12f);
         asteroidGenerator = new AsteroidGenerator(world,
+                  camera,
                   5,
                   2000,
                   new Vector2(6, 8),
-                  new Vector2(30, 100)
+                  new Vector2(1, 3)
           );
 
       world.setContactListener(new ContactListener() {
@@ -79,7 +79,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
         }
       });
-    }
+
     }
 
     @Override
@@ -99,8 +99,9 @@ public class JavaInvaders extends ApplicationAdapter {
 
         // draw entities
         spaceship.update(shapeRenderer, camera);
-        asteroidGenerator.update();
-        debugRenderer.render(world, camera.combined);
+        asteroid.draw(shapeRenderer);
+        asteroidGenerator.update(shapeRenderer);
+//        debugRenderer.render(world, camera.combined);
 
     }
 

@@ -69,7 +69,6 @@ public class SpaceEntity {
         //that's it
         shapeRenderer.end();
 
-        shapeRenderer.dispose();
     }
     float getHealth(){ return health; }
 

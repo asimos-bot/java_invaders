@@ -74,10 +74,10 @@ public class Asteroid extends SpaceEntity {
 
             //decompose vector and get x
 
-            vertices[i] = (float) Math.cos( currentAngle ) * VertexMagnitude*sf;
+            vertices[i] = (float) Math.cos( currentAngle ) * vertexMagnitude*sf;
 
             //decompose vector and get y
-            vertices[i+1] = (float) Math.sin( currentAngle ) * VertexMagnitude*sf;
+            vertices[i+1] = (float) Math.sin( currentAngle ) * vertexMagnitude*sf;
             if( vertexMagnitude > highestVertexHeight ) highestVertexHeight = vertexMagnitude;
             if( vertexMagnitude < lowestVertexHeight ) lowestVertexHeight = vertexMagnitude;
 

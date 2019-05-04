@@ -91,7 +91,7 @@ public class Spaceship extends SpaceEntity {
     }
 
     void update(ShapeRenderer shapeRenderer, Camera cam) {
-        if( health < 0 ) System.out.println("you are dead");
+//        if( health < 0 ) System.out.println("you are dead");
 
         inputHandling();
         borderTeletransportation(cam);

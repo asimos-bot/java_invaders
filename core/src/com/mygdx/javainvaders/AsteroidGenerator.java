@@ -1,6 +1,8 @@
 package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -11,16 +13,19 @@ import java.util.Set;
 public class AsteroidGenerator {
 
     private World world;
+    private Camera cam;
+    Camera camera;
     private Set<Asteroid> asteroids = new HashSet<Asteroid>();
     private int maxNumAsteroids;
     private Vector2 numVerticesRanges;
     private Vector2 verticesHeightRanges;
     private int youngestGeneration = Integer.MAX_VALUE;
 
-    AsteroidGenerator(World world, int maxNumAsteroids, long timeGapBetweenLaunches, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
+    AsteroidGenerator(World world, Camera cam, int maxNumAsteroids, long timeGapBetweenLaunches, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
 
         //save configs for our asteroids
         this.world = world;
+        this.camera = cam;
         this.maxNumAsteroids = maxNumAsteroids;
         this.numVerticesRanges = numVerticesRanges;
         this.verticesHeightRanges = verticesHeightRanges;
@@ -34,23 +39,23 @@ public class AsteroidGenerator {
 
         //for even values we go to the left and right side
         if( side % 2 == 0 ){
-            initialY = Helper.randFloatRange( MaxHeightRange, Gdx.graphics.getHeight() - MaxHeightRange );
+            initialY = Helper.randFloatRange( MaxHeightRange, camera.viewportHeight - MaxHeightRange );
 
             //left
             if( side == 0 ){
                 initialX = -MaxHeightRange;
                 //right
             }else{
-                initialX = Gdx.graphics.getWidth() + MaxHeightRange;
+                initialX = camera.viewportWidth + MaxHeightRange;
             }
         }else{
-            initialX = Helper.randFloatRange( MaxHeightRange, Gdx.graphics.getWidth() - MaxHeightRange );
+            initialX = Helper.randFloatRange( MaxHeightRange, camera.viewportWidth - MaxHeightRange );
             //bottom
             if( side == 1 ){
                 initialY = -MaxHeightRange;
                 //top
             }else{
-                initialY = Gdx.graphics.getHeight() + MaxHeightRange;
+                initialY = camera.viewportHeight + MaxHeightRange;
             }
         }
         return new Vector2( initialX, initialY );
@@ -72,7 +77,7 @@ public class AsteroidGenerator {
 
         newAsteroid.body.setTransform( originPoint.x, originPoint.y, newAsteroid.body.getAngle() );
 
-        newAsteroid.pushTowards( new Vector2( Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2 ), 10e7f );
+        newAsteroid.pushTowards( new Vector2( camera.viewportWidth/2, camera.viewportHeight/2 ), 5*10e2f );
 
         asteroids.add(newAsteroid);
     }
@@ -102,7 +107,7 @@ public class AsteroidGenerator {
     }
 
 
-    void update(){
+    void update(ShapeRenderer shapeRenderer){
 
         if( asteroids.size() < maxNumAsteroids ){
 
@@ -145,7 +150,7 @@ public class AsteroidGenerator {
                         youngestGeneration = asteroid.generationsLeft;
                     }
 
-                    asteroid.draw();
+                    asteroid.draw(shapeRenderer);
                 }
             }
         }
