@@ -11,7 +11,7 @@ public class Asteroid extends SpaceEntity {
     }
 
     void defineAsteroid(int numVertices, float minVertexHeight, float maxVertexHeight){
-
+        int sf = 1;
         if( numVertices < 3 ) numVertices = 3;
         if( minVertexHeight < 0 ) minVertexHeight = 0;
 
@@ -39,10 +39,10 @@ public class Asteroid extends SpaceEntity {
             VertexMagnitude = (float) (minVertexHeight + Math.random() * (maxVertexHeight - minVertexHeight));
 
             //decompose vector and get x
-            vertices[i] = (float) Math.cos( currentAngle ) * VertexMagnitude;
+            vertices[i] = (float) Math.cos( currentAngle ) * VertexMagnitude*sf;
 
             //decompose vector and get y
-            vertices[i+1] = (float) Math.sin( currentAngle ) * VertexMagnitude;
+            vertices[i+1] = (float) Math.sin( currentAngle ) * VertexMagnitude*sf;
 
             currentAngle -= AngleBetweenVertices;
         }

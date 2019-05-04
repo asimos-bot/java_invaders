@@ -2,6 +2,8 @@ package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -10,12 +12,12 @@ import java.util.List;
 
 public class Spaceship extends SpaceEntity {
 
-    private float throttle = 10e4f;
+    private float throttle = 9f;
     private float angularVelocity = 3.0f;
 
     private List<com.mygdx.javainvaders.Bullet> bullets = new ArrayList<com.mygdx.javainvaders.Bullet>();
-    private int maxBullets = 50;
-    private float bulletInterval = 0.25f * 1000;
+    private int maxBullets = 5;
+    private float bulletInterval = 0.5f * 10e2f;
     private long bulletTime = System.currentTimeMillis();
 
     private World world;
@@ -27,6 +29,9 @@ public class Spaceship extends SpaceEntity {
         this.world = world;
         body.setAngularDamping(5); //how long it takes to stop the rotation basically
         body.setLinearDamping(0.5f);
+        float sf = 1;
+        float[] vertices = {-1*sf,0, 0,0.5f*sf, 1*sf,0, 0,2*sf};
+        this.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
     }
 
     //handles input to spaceship control and draws it
@@ -34,8 +39,8 @@ public class Spaceship extends SpaceEntity {
         //goes forward
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             body.applyForceToCenter(
+                    (float) -Math.sin(body.getAngle()) * throttle,
                     (float) Math.cos(body.getAngle()) * throttle,
-                    (float) Math.sin(body.getAngle()) * throttle,
                     true
             );
         }
@@ -52,60 +57,60 @@ public class Spaceship extends SpaceEntity {
         }
     }
 
-    private void borderTeletransportation() {
+    private void borderTeletransportation(Camera cam) {
 
         //if spaceship goes past the right border
-        if (body.getWorldCenter().x > Gdx.graphics.getWidth())
+        if (body.getWorldCenter().x > cam.viewportWidth)
             body.setTransform(0, body.getPosition().y, body.getAngle());
 
         //if spaceship goes past the left border
         if (body.getWorldCenter().x < 0)
-            body.setTransform(Gdx.graphics.getWidth(), body.getPosition().y, body.getAngle());
+            body.setTransform(cam.viewportWidth, body.getPosition().y, body.getAngle());
 
         //if spaceship goes past the top border
-        if (body.getWorldCenter().y > Gdx.graphics.getHeight())
+        if (body.getWorldCenter().y > cam.viewportHeight)
             body.setTransform(body.getPosition().x, 0, body.getAngle());
 
         //if spaceship goes past the bottom border
         if (body.getWorldCenter().y < 0)
-            body.setTransform(body.getPosition().x, Gdx.graphics.getHeight(), body.getAngle());
+            body.setTransform(body.getPosition().x, cam.viewportHeight, body.getAngle());
     }
 
     // Does pewpew to shoot sum of dat assteroidzzzzz
     private void pewpew() {
         if (this.bullets.size() < this.maxBullets && System.currentTimeMillis() - this.bulletTime >= this.bulletInterval) {
             float angle = this.body.getAngle();
-            float x = this.body.getPosition().x + 30 * (float) Math.cos(angle);
-            float y = this.body.getPosition().y + 30 * (float) Math.sin(angle);
+            float x = this.body.getPosition().x + 3* (float) -Math.sin(angle);
+            float y = this.body.getPosition().y + 3* (float) Math.cos(angle);
             com.mygdx.javainvaders.Bullet b = new com.mygdx.javainvaders.Bullet(this.world, x, y);
             b.body.setTransform(x, y, angle);
+            b.body.setLinearVelocity(20* (float) -Math.sin(angle), 20 * (float) Math.cos(angle));
             this.bullets.add(b);
             this.bulletTime = System.currentTimeMillis();
         }
     }
 
-    void update() {
+    void update(ShapeRenderer shapeRenderer, Camera cam) {
         inputHandling();
-        borderTeletransportation();
-        draw();
+        borderTeletransportation(cam);
+        draw(shapeRenderer);
 
         List<com.mygdx.javainvaders.Bullet> deadBullets = new ArrayList<com.mygdx.javainvaders.Bullet>();
         for (Bullet b : this.bullets) {
-            if (b.pewpewdeath()){
+            if (b.pewpewdeath(cam)){
                 deadBullets.add(b); // Kill bullets
                 continue;
             }
-            b.draw();
+            b.draw(shapeRenderer);
             float angle = b.body.getAngle();
-            float x = Bullet.throttle * (float) Math.cos(angle);
-            float y = Bullet.throttle * (float) Math.sin(angle);
-            b.accelCount++;
-            b.body.setLinearVelocity(b.accelCount * x, b.accelCount * y);
+            float x = Bullet.throttle * (float) -Math.sin(angle);
+            float y = Bullet.throttle * (float) Math.cos(angle);
+            b.body.applyForceToCenter(x, y, true);
+
         }
 
         for (Bullet b : deadBullets) {
             this.bullets.remove(b);
         }
-
     }
 }
