@@ -28,7 +28,7 @@ public class Spaceship extends SpaceEntity {
         super(world, initialX, initialY);
         this.world = world;
         body.setAngularDamping(5); //how long it takes to stop the rotation basically
-        body.setLinearDamping(0.5f);
+        body.setLinearDamping(0.1f);
         float sf = 1;
         float[] vertices = {-1*sf,0, 0,0.5f*sf, 1*sf,0, 0,2*sf};
         this.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
@@ -91,6 +91,8 @@ public class Spaceship extends SpaceEntity {
     }
 
     void update(ShapeRenderer shapeRenderer, Camera cam) {
+        if( health < 0 ) System.out.println("you are dead");
+
         inputHandling();
         borderTeletransportation(cam);
         draw(shapeRenderer);
