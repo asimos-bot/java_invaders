@@ -98,6 +98,12 @@ nb-configuration.xml
 
 ## Gradle
 
+desktop/build.gradle
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+gradlew
+settings.gradle
+
 /local.properties
 .gradle/
 gradle-app.setting
