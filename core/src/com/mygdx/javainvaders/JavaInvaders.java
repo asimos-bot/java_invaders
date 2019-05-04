@@ -4,112 +4,112 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
+import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
+import com.badlogic.gdx.physics.bullet.Bullet;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class JavaInvaders extends ApplicationAdapter {
 
-	//Box2D
-	private World world; //box2d world object (handle the physics interactions in our game)
+    //Box2D
+    private World world; //box2d world object (handle the physics interactions in our game)
 
-	//entities
-	private Spaceship spaceship;
-	private AsteroidGenerator asteroidGenerator;
+    //entities
+    private Spaceship spaceship;
+    private Asteroid asteroid;
+    private AsteroidGenerator asteroidGenerator;
 
-	private Box2DDebugRenderer debugRenderer;
-	private OrthographicCamera camera;
+    private Box2DDebugRenderer debugRenderer;
+    private OrthographicCamera camera;
+    private ShapeRenderer shapeRenderer;
 
-	@Override
-	public void create () {
+    @Override
+    public void create() {
+        // world
+        world = new World(new Vector2(0, 0f), true);
+        // camera and renderers
+        camera = new OrthographicCamera(64, 48);
+        camera.translate(camera.viewportWidth/2, camera.viewportHeight/2);
+        camera.zoom += 0f;
+        debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
+        shapeRenderer = new ShapeRenderer();
 
-		//set clear color
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+        spaceship = new Spaceship(world, camera.viewportWidth/2, camera.viewportHeight/2);
+        asteroid = new Asteroid(world, 20, 20);
+        asteroid.defineAsteroid(8, 3f, 12f);
+        asteroidGenerator = new AsteroidGenerator(world,
+                  5,
+                  2000,
+                  new Vector2(6, 8),
+                  new Vector2(30, 100)
+          );
 
-		//camera
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false);
+      world.setContactListener(new ContactListener() {
+        @Override
+        public void beginContact(Contact contact) {
 
-		//initialize box2d for physics simulation
-		Box2D.init();
-		world = new World(new Vector2(0,0), true); //set world object (will do the physiscs)
+          Body bodyA = contact.getFixtureA().getBody();
+                  Body bodyB = contact.getFixtureB().getBody();
 
-        //debug
-        debugRenderer = new Box2DDebugRenderer();
+                  float damage = contact.getWorldManifold().getNormal().len2();
 
-		//create spaceship
-		spaceship = new Spaceship(world,
-				Gdx.graphics.getWidth()/2f,
-				Gdx.graphics.getHeight()/2f);
-		float[] vertices = { -5,10 , 20,0 , -5,-10 , -3,0 };
-		spaceship.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
+                  SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
+                  SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
 
-		asteroidGenerator = new AsteroidGenerator(world,
-                5,
-                2000,
-                new Vector2(6, 8),
-                new Vector2(30, 100)
-        );
+                  EntityA.health -= damage;
+                  EntityB.health -= damage;
+        }
 
-		world.setContactListener(new ContactListener() {
-			@Override
-			public void beginContact(Contact contact) {
+        @Override
+        public void endContact(Contact contact) {
 
-				Body bodyA = contact.getFixtureA().getBody();
-                Body bodyB = contact.getFixtureB().getBody();
+        }
 
-                float damage = contact.getWorldManifold().getNormal().len2();
+        @Override
+        public void preSolve(Contact contact, Manifold oldManifold) {
 
-                SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
-                SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
+        }
 
-                EntityA.health -= damage;
-                EntityB.health -= damage;
-			}
+        @Override
+        public void postSolve(Contact contact, ContactImpulse impulse) {
 
-			@Override
-			public void endContact(Contact contact) {
+        }
+      });
+    }
+    }
 
-			}
+    @Override
+    public void render() {
+        logicStep(1 / 60f);
 
-			@Override
-			public void preSolve(Contact contact, Manifold oldManifold) {
-
-			}
-
-			@Override
-			public void postSolve(Contact contact, ContactImpulse impulse) {
-
-			}
-		});
-	}
-
-	@Override
-	public void render () {
+        // Clear screen
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glDisable(GL20.GL_BLEND);
 
         camera.update();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.identity();
 
-        //clear screen
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        // draw entities
+        spaceship.update(shapeRenderer, camera);
+        asteroidGenerator.update();
+        debugRenderer.render(world, camera.combined);
 
-		spaceship.update();
-		asteroidGenerator.update();
+    }
 
-		//debug
-		//debugRenderer.render(world, camera.combined);
+    public void logicStep(float delta) {
+        world.step(delta, 6, 2);
+    }
 
-		//tell box2D to do its calculations
-		world.step(1/60f, 6, 2);
-	}
-	
-	@Override
-	public void dispose () {
+    @Override
+    public void dispose() {
 
 		//free memory
 		world.dispose();

@@ -52,16 +52,16 @@ public class SpaceEntity {
         entityShape.dispose();
     }
 
-    protected void draw(){
+    protected void draw(ShapeRenderer shapeRenderer){
 
-        //get a ShapeRenderer
-        ShapeRenderer shapeRenderer = new ShapeRenderer();
         //draw only countor lines
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.identity();
         //white lines
         shapeRenderer.setColor(1,1,1,1);
         //draw here (get center of our polygon, where point 0,0 is)
         shapeRenderer.translate(body.getPosition().x, body.getPosition().y, 0);
+//        shapeRenderer.translate(0.1f, 0.1f, 0);
         //draw in the right orientation
         shapeRenderer.rotate(0, 0, 1, (float)Math.toDegrees( (double)body.getAngle() ) );
         //with this shape
