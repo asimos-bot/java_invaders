@@ -61,19 +61,19 @@ public class Spaceship extends SpaceEntity {
 
         //if spaceship goes past the right border
         if (body.getWorldCenter().x > cam.viewportWidth)
-            body.setTransform(0, body.getPosition().y, body.getAngle());
+            body.setTransform(1, body.getPosition().y, body.getAngle());
 
         //if spaceship goes past the left border
         if (body.getWorldCenter().x < 0)
-            body.setTransform(cam.viewportWidth, body.getPosition().y, body.getAngle());
+            body.setTransform(cam.viewportWidth-1, body.getPosition().y, body.getAngle());
 
         //if spaceship goes past the top border
         if (body.getWorldCenter().y > cam.viewportHeight)
-            body.setTransform(body.getPosition().x, 0, body.getAngle());
+            body.setTransform(body.getPosition().x, 1, body.getAngle());
 
         //if spaceship goes past the bottom border
         if (body.getWorldCenter().y < 0)
-            body.setTransform(body.getPosition().x, cam.viewportHeight, body.getAngle());
+            body.setTransform(body.getPosition().x, cam.viewportHeight-1, body.getAngle());
     }
 
     // Does pewpew to shoot sum of dat assteroidzzzzz
