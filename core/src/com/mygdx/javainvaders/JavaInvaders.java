@@ -9,9 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
-import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import javax.swing.text.html.parser.Entity;
 
 public class JavaInvaders extends ApplicationAdapter {
 
@@ -33,52 +34,55 @@ public class JavaInvaders extends ApplicationAdapter {
         world = new World(new Vector2(0, 0f), true);
         // camera and renderers
         camera = new OrthographicCamera(64, 48);
-        camera.translate(camera.viewportWidth/2, camera.viewportHeight/2);
+        camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
 //        camera.zoom += 10f;
         debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
         shapeRenderer = new ShapeRenderer();
 
-        spaceship = new Spaceship(world, camera.viewportWidth/2, camera.viewportHeight/2);
+        spaceship = new Spaceship(world, camera.viewportWidth / 2, camera.viewportHeight / 2);
 //        asteroid = new Asteroid(world, 20, 20, 8, 2f, 12f);
         asteroidGenerator = new AsteroidGenerator(world,
-                  camera,
-                  5,
-                  2000,
-                  new Vector2(4, 8),
-                  new Vector2(1, 8)
-          );
+                camera,
+                9,
+                2000,
+                new Vector2(4, 8),
+                new Vector2(3, 8)
+        );
 
-      world.setContactListener(new ContactListener() {
-        @Override
-        public void beginContact(Contact contact) {
+        world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
 
-          Body bodyA = contact.getFixtureA().getBody();
-                  Body bodyB = contact.getFixtureB().getBody();
+                Body bodyA = contact.getFixtureA().getBody();
+                Body bodyB = contact.getFixtureB().getBody();
 
-                  float damage = contact.getWorldManifold().getNormal().len2();
+                float damage = contact.getWorldManifold().getNormal().len2();
 
-                  SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
-                  SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
+                SpaceEntity EntityA = (SpaceEntity) bodyA.getUserData();
+                SpaceEntity EntityB = (SpaceEntity) bodyB.getUserData();
+                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
+                    damage *= 7;
+                }
 
-                  EntityA.health -= damage*2;
-                  EntityB.health -= damage*2;
-        }
+                EntityA.health -= damage;
+                EntityB.health -= damage;
+            }
 
-        @Override
-        public void endContact(Contact contact) {
+            @Override
+            public void endContact(Contact contact) {
 
-        }
+            }
 
-        @Override
-        public void preSolve(Contact contact, Manifold oldManifold) {
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
 
-        }
+            }
 
-        @Override
-        public void postSolve(Contact contact, ContactImpulse impulse) {
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
 
-        }
-      });
+            }
+        });
 
     }
 
@@ -112,8 +116,8 @@ public class JavaInvaders extends ApplicationAdapter {
     @Override
     public void dispose() {
 
-		//free memory
-		world.dispose();
-		debugRenderer.dispose();
-	}
+        //free memory
+        world.dispose();
+        debugRenderer.dispose();
+    }
 }
