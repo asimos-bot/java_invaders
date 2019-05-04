@@ -13,7 +13,6 @@ import java.util.Set;
 public class AsteroidGenerator {
 
     private World world;
-    private Camera cam;
     Camera camera;
     private Set<Asteroid> asteroids = new HashSet<Asteroid>();
     private int maxNumAsteroids;
@@ -125,7 +124,7 @@ public class AsteroidGenerator {
         for(Asteroid asteroid : asteroids){
 
             //put asteroid to be removed if it is offscreen
-            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 ) ||
+            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 , camera) ||
                     //overpopulation not good
                     maxNumAsteroids < asteroids.size() - asteroidsToRemove.size() && asteroid.generationsLeft == youngestGeneration ){
 

@@ -39,13 +39,13 @@ public class JavaInvaders extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
 
         spaceship = new Spaceship(world, camera.viewportWidth/2, camera.viewportHeight/2);
-        asteroid = new Asteroid(world, 20, 20, 8, 2f, 12f);
+//        asteroid = new Asteroid(world, 20, 20, 8, 2f, 12f);
         asteroidGenerator = new AsteroidGenerator(world,
                   camera,
                   5,
                   2000,
-                  new Vector2(6, 8),
-                  new Vector2(1, 3)
+                  new Vector2(4, 8),
+                  new Vector2(1, 8)
           );
 
       world.setContactListener(new ContactListener() {
@@ -60,8 +60,8 @@ public class JavaInvaders extends ApplicationAdapter {
                   SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
                   SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
 
-                  EntityA.health -= damage;
-                  EntityB.health -= damage;
+                  EntityA.health -= damage*2;
+                  EntityB.health -= damage*2;
         }
 
         @Override
@@ -99,9 +99,9 @@ public class JavaInvaders extends ApplicationAdapter {
 
         // draw entities
         spaceship.update(shapeRenderer, camera);
-        asteroid.draw(shapeRenderer);
+//        asteroid.draw(shapeRenderer);
         asteroidGenerator.update(shapeRenderer);
-//        debugRenderer.render(world, camera.combined);
+        debugRenderer.render(world, camera.combined);
 
     }
 

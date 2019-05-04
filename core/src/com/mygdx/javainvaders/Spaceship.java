@@ -113,6 +113,7 @@ public class Spaceship extends SpaceEntity {
 
         for (Bullet b : deadBullets) {
             this.bullets.remove(b);
+            world.destroyBody(b.body);
         }
     }
 }

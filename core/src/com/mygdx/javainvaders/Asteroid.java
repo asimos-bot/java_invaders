@@ -157,7 +157,7 @@ public class Asteroid extends SpaceEntity {
             childs.get(i).generationsLeft = this.generationsLeft-1;
 
             childs.get(i).push( new Vector2( (float)Math.cos(currentAngle), (float)Math.sin(currentAngle) ).scl(
-                    childs.get(i).body.getMass()*10e3f
+                    childs.get(i).body.getMass()*10e2f
             ) );
 
             currentAngle += angleBetweenSides;
