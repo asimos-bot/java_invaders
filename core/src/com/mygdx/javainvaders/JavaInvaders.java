@@ -44,7 +44,6 @@ public class JavaInvaders extends ApplicationAdapter {
         asteroidGenerator = new AsteroidGenerator(world,
                 camera,
                 9,
-                2000,
                 new Vector2(4, 8),
                 new Vector2(3, 8)
         );
@@ -60,9 +59,9 @@ public class JavaInvaders extends ApplicationAdapter {
 
                 SpaceEntity EntityA = (SpaceEntity) bodyA.getUserData();
                 SpaceEntity EntityB = (SpaceEntity) bodyB.getUserData();
-                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
-                    damage *= 7;
-                }
+//                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
+//                    damage *= 7;
+//                }
 
                 EntityA.health -= damage;
                 EntityB.health -= damage;

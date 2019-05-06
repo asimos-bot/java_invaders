@@ -20,7 +20,7 @@ public class AsteroidGenerator {
     private Vector2 verticesHeightRanges;
     private int youngestGeneration = Integer.MAX_VALUE;
 
-    AsteroidGenerator(World world, Camera cam, int maxNumAsteroids, long timeGapBetweenLaunches, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
+    AsteroidGenerator(World world, Camera cam, int maxNumAsteroids, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
 
         //save configs for our asteroids
         this.world = world;

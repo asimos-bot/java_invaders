@@ -34,15 +34,24 @@ public class Spaceship extends SpaceEntity {
         this.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
     }
 
+    void moveForward(){
+        body.applyForceToCenter(
+                (float) -Math.sin(body.getAngle()) * throttle,
+                (float) Math.cos(body.getAngle()) * throttle,
+                true
+        );
+    }
+
     //handles input to spaceship control and draws it
-    private void inputHandling() {
+    private void inputHandling(Camera cam) {
+
+        /*
+            KEYBOARD
+         */
+
         //goes forward
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            body.applyForceToCenter(
-                    (float) -Math.sin(body.getAngle()) * throttle,
-                    (float) Math.cos(body.getAngle()) * throttle,
-                    true
-            );
+            moveForward();
         }
         //rotate
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -54,6 +63,35 @@ public class Spaceship extends SpaceEntity {
         //do pewpew
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             pewpew();
+        }
+
+        /*
+            TOUCHSCREEN
+         */
+
+        if( Gdx.input.isTouched() ) {
+            boolean left = false, right = false;
+
+            //gather areas being touched
+            if ((Gdx.input.isTouched(0) && Gdx.input.getX(0) < Gdx.graphics.getWidth() / 2) ||
+                    (Gdx.input.isTouched(1) && Gdx.input.getX(1) < Gdx.graphics.getWidth() / 2)) {
+                left = true;
+            } if ((Gdx.input.isTouched(0) && Gdx.input.getX(0) > Gdx.graphics.getWidth() / 2) ||
+                    (Gdx.input.isTouched(1) && Gdx.input.getX(1) > Gdx.graphics.getWidth() / 2)) {
+                right = true;
+            }
+
+            //always shoot (temporary, don't know best way to do it yet (divide screen in three?))
+            pewpew();
+
+            //choose action
+            if (left && right) {
+                moveForward();
+            } else if (left) {
+                rotate(angularVelocity);
+            } else if (right) {
+                rotate(-angularVelocity);
+            }
         }
     }
 
@@ -93,7 +131,7 @@ public class Spaceship extends SpaceEntity {
     void update(ShapeRenderer shapeRenderer, Camera cam) {
 //        if( health < 0 ) System.out.println("you are dead");
 
-        inputHandling();
+        inputHandling(cam);
         borderTeletransportation(cam);
         draw(shapeRenderer);
 
