@@ -13,7 +13,10 @@ import java.util.List;
 public class Spaceship extends SpaceEntity {
 
     private float throttle = 9f;
-    private float angularVelocity = 4f;
+    private float angularVelocity = 3f;
+    private float angularVelocityCurrent = angularVelocity;
+    private float angularVelocityMax = 6f;
+    private float angularAccel = 1.02f;
 
     private List<com.mygdx.javainvaders.Bullet> bullets = new ArrayList<com.mygdx.javainvaders.Bullet>();
     private int maxBullets = 5;
@@ -27,8 +30,10 @@ public class Spaceship extends SpaceEntity {
     Spaceship(World world, float initialX, float initialY) {
         super(world, initialX, initialY);
         this.world = world;
+
         body.setAngularDamping(8f); //how long it takes to stop the rotation basically
-        body.setLinearDamping(0.5f);
+        body.setLinearDamping(1f);
+
         float sf = 1;
         float[] vertices = {-1*sf,0, 0,0.5f*sf, 1*sf,0, 0,2*sf};
         this.setFixtures(vertices, 0.1f, 0.5f, 0.1f);
@@ -55,9 +60,16 @@ public class Spaceship extends SpaceEntity {
         }
         //rotate
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            rotate(angularVelocity);
+            angularVelocityCurrent *= angularAccel;
+            angularVelocityCurrent = angularVelocityCurrent >= angularVelocityMax ? angularVelocityMax : angularVelocityCurrent;
+            rotate(angularVelocityCurrent);
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            rotate(-angularVelocity);
+            angularVelocityCurrent *= angularAccel;
+            angularVelocityCurrent = angularVelocityCurrent >= angularVelocityMax ? angularVelocityMax : angularVelocityCurrent;
+            rotate(-angularVelocityCurrent);
+        }
+        else {
+            angularVelocityCurrent = angularVelocity;
         }
 
         //do pewpew

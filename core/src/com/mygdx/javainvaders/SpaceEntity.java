@@ -25,7 +25,7 @@ public class SpaceEntity {
         body = world.createBody(bodyDef);
         body.setUserData(this);
 
-        health = body.getMass() * 5;
+        health = body.getMass() * 1;
     }
     protected SpaceEntity(World world, Vector2 initialPosition){
 

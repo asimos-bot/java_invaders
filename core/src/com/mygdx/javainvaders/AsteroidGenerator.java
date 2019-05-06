@@ -20,6 +20,7 @@ public class AsteroidGenerator {
     private Vector2 verticesHeightRanges;
     private int youngestGeneration = Integer.MAX_VALUE;
 
+
     AsteroidGenerator(World world, Camera cam, int maxNumAsteroids, Vector2 numVerticesRanges, Vector2 verticesHeightRanges){
 
         //save configs for our asteroids
@@ -76,7 +77,7 @@ public class AsteroidGenerator {
 
         newAsteroid.body.setTransform( originPoint.x, originPoint.y, newAsteroid.body.getAngle() );
 
-        newAsteroid.pushTowards( new Vector2( camera.viewportWidth/2, camera.viewportHeight/2 ), 5*10e2f );
+        newAsteroid.pushTowards( new Vector2( camera.viewportWidth/2, camera.viewportHeight/2 ), Asteroid.forceBase );
 
         asteroids.add(newAsteroid);
     }
@@ -95,7 +96,7 @@ public class AsteroidGenerator {
 
     private void addAsteroids(ArrayList<Asteroid> asteroidsToAdd){
 
-        if( asteroidsToAdd.size() > 0 ){
+        if ( asteroidsToAdd.size() > 0 ){
 
             Asteroid asteroidToAdd = asteroidsToAdd.remove(0);
             asteroids.add(asteroidToAdd);
@@ -123,10 +124,12 @@ public class AsteroidGenerator {
 
         for(Asteroid asteroid : asteroids){
 
-            //put asteroid to be removed if it is offscreen
-            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 , camera) ||
-                    //overpopulation not good
-                    maxNumAsteroids < asteroids.size() - asteroidsToRemove.size() && asteroid.generationsLeft == youngestGeneration ){
+//            //put asteroid to be removed if it is offscreen
+//            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 , camera) ||
+//                    //overpopulation not good
+//                    maxNumAsteroids < asteroids.size() - asteroidsToRemove.size() && asteroid.generationsLeft == youngestGeneration ){
+
+            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 , camera)){
 
                 asteroidsToRemove.add( asteroid );
 
@@ -145,9 +148,9 @@ public class AsteroidGenerator {
                 }else{
 
                     //if we have a overpopulation of asteroids, start seeking the younger ones to kill
-                    if( asteroids.size() > maxNumAsteroids && asteroid.generationsLeft < youngestGeneration ){
-                        youngestGeneration = asteroid.generationsLeft;
-                    }
+//                    if( asteroids.size() > maxNumAsteroids && asteroid.generationsLeft < youngestGeneration ){
+//                        youngestGeneration = asteroid.generationsLeft;
+//                    }
 
                     asteroid.draw(shapeRenderer);
                 }

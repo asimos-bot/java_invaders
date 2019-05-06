@@ -30,24 +30,27 @@ public class JavaInvaders extends ApplicationAdapter {
 
     @Override
     public void create() {
-        // world
+        // World
         world = new World(new Vector2(0, 0f), true);
-        // camera and renderers
-        camera = new OrthographicCamera(64, 48);
+
+        // Camera and renderers
+        camera = new OrthographicCamera(80, 60);
         camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
 //        camera.zoom += 10f;
         debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
         shapeRenderer = new ShapeRenderer();
 
+        // Space entities
         spaceship = new Spaceship(world, camera.viewportWidth / 2, camera.viewportHeight / 2);
 //        asteroid = new Asteroid(world, 20, 20, 8, 2f, 12f);
         asteroidGenerator = new AsteroidGenerator(world,
                 camera,
-                9,
+                10,
                 new Vector2(4, 8),
                 new Vector2(3, 8)
         );
 
+        // Collision detection
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -62,6 +65,10 @@ public class JavaInvaders extends ApplicationAdapter {
 //                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
 //                    damage *= 7;
 //                }
+
+                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Asteroid") && EntityB.getClass().getName().equals("com.mygdx.javainvaders.Asteroid")) {
+                    damage = 0;
+                }
 
                 EntityA.health -= damage;
                 EntityB.health -= damage;
@@ -96,6 +103,7 @@ public class JavaInvaders extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
+        // Update camera
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.identity();

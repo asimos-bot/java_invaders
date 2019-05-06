@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Bullet extends SpaceEntity {
 
-    static float throttle = 8f;
+    static float throttle = 500f;
     protected int accelCount = 0;
     private float initHealth;
 
@@ -16,11 +16,9 @@ public class Bullet extends SpaceEntity {
         body.setAngularDamping(500);
         body.setLinearDamping(0.0f);
 
-        float sf = 2*10e-2f;
-//        float[] vertices = { 0,-1*sf, 3*sf,-1*sf, 4*sf,0, 3*sf,1*sf, 0,1*sf };
-//        float[] vertices = { 0,-1*sf, 0,1*sf, 3*sf,1*sf, 4*sf,0,  3*sf,-1*sf };
+        float sf = 2*10e-2f; // Scaling factor
         float[] vertices = { -1*sf,0, 1*sf,0, 1*sf,3*sf, 0,4*sf, -1*sf,3*sf};
-        setFixtures(vertices, 0.2f, 0.5f, 0.8f);
+        setFixtures(vertices, 10f, 0.5f, 0.8f);
     }
 
     protected boolean pewpewdeath(Camera cam){

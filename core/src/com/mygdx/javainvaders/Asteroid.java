@@ -11,10 +11,9 @@ public class Asteroid extends SpaceEntity {
     private float lowestVertexHeight=Float.MAX_VALUE;
     private int numVertices;
     public int generationsLeft = 3;
+    static float forceBase = 9*10e2f;
 
     Asteroid(World world, float initialX, float initialY, int numVertices, float minVertexHeight, float maxVertextHeight){
-
-
         super(world, initialX, initialY);
 
         this.numVertices = numVertices;
@@ -24,6 +23,7 @@ public class Asteroid extends SpaceEntity {
 
         defineAsteroid( numVertices, minVertexHeight, maxVertextHeight );
     }
+
     Asteroid(World world, Vector2 initialPosition, int numVertices, Vector2 verticesHeightRanges){
 
         this( world, initialPosition.x, initialPosition.y, numVertices, verticesHeightRanges.x, verticesHeightRanges.y );
@@ -157,7 +157,7 @@ public class Asteroid extends SpaceEntity {
             childs.get(i).generationsLeft = this.generationsLeft-1;
 
             childs.get(i).push( new Vector2( (float)Math.cos(currentAngle), (float)Math.sin(currentAngle) ).scl(
-                    childs.get(i).body.getMass()*10e2f
+                    childs.get(i).body.getMass()*Asteroid.forceBase / ((5 - this.generationsLeft)*10)
             ) );
 
             currentAngle += angleBetweenSides;
