@@ -7,21 +7,18 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
-import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-
-import javax.swing.text.html.parser.Entity;
 
 public class JavaInvaders extends ApplicationAdapter {
 
     //Box2D
     private World world; //box2d world object (handle the physics interactions in our game)
 
+    //menu
+    private Menu menu;
+
+
     //entities
     private Spaceship spaceship;
-    private Asteroid asteroid;
     private AsteroidGenerator asteroidGenerator;
 
     private Box2DDebugRenderer debugRenderer;
@@ -40,13 +37,15 @@ public class JavaInvaders extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
 
         spaceship = new Spaceship(world, camera.viewportWidth / 2, camera.viewportHeight / 2);
-//        asteroid = new Asteroid(world, 20, 20, 8, 2f, 12f);
+
         asteroidGenerator = new AsteroidGenerator(world,
                 camera,
-                9,
+                40,
                 new Vector2(4, 8),
                 new Vector2(3, 8)
         );
+
+        menu = new Menu("Java Invaders");
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -59,9 +58,9 @@ public class JavaInvaders extends ApplicationAdapter {
 
                 SpaceEntity EntityA = (SpaceEntity) bodyA.getUserData();
                 SpaceEntity EntityB = (SpaceEntity) bodyB.getUserData();
-//                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
-//                    damage *= 7;
-//                }
+                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
+                    damage *= 7;
+                }
 
                 EntityA.health -= damage;
                 EntityB.health -= damage;
@@ -101,9 +100,13 @@ public class JavaInvaders extends ApplicationAdapter {
         shapeRenderer.identity();
 
         // draw entities
-        spaceship.update(shapeRenderer, camera);
-//        asteroid.draw(shapeRenderer);
         asteroidGenerator.update(shapeRenderer);
+
+        if( !menu.isActive() ) {
+            spaceship.update(shapeRenderer, camera);
+        }else{
+            menu.update();
+        }
         debugRenderer.render(world, camera.combined);
 
     }
@@ -118,5 +121,6 @@ public class JavaInvaders extends ApplicationAdapter {
         //free memory
         world.dispose();
         debugRenderer.dispose();
+        menu.dispose();
     }
 }

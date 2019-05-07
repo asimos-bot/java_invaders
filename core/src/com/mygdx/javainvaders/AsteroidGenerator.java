@@ -124,9 +124,7 @@ public class AsteroidGenerator {
         for(Asteroid asteroid : asteroids){
 
             //put asteroid to be removed if it is offscreen
-            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 , camera) ||
-                    //overpopulation not good
-                    maxNumAsteroids < asteroids.size() - asteroidsToRemove.size() && asteroid.generationsLeft == youngestGeneration ){
+            if( Helper.isOffScreen( asteroid.body.getWorldCenter(), asteroid.getHighestVertexHeight()*2 , camera)){
 
                 asteroidsToRemove.add( asteroid );
 
@@ -151,6 +149,16 @@ public class AsteroidGenerator {
 
                     asteroid.draw(shapeRenderer);
                 }
+            }
+        }
+
+        //youngestGeneration found, now we delete the necessary number of asteroids which belong to it
+        for( Asteroid asteroid : asteroids ){
+
+            if( asteroid.generationsLeft == youngestGeneration &&
+                    maxNumAsteroids < asteroids.size() - asteroidsToRemove.size() &&
+                    !asteroidsToRemove.contains(asteroid)){
+                asteroidsToRemove.add( asteroid );
             }
         }
 
