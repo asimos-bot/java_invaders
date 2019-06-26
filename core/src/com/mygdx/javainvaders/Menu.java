@@ -1,59 +1,65 @@
 package com.mygdx.javainvaders;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class Menu {
+enum Option{
+
+  none,
+  play,
+  exit
+};
+
+public class Menu extends Stage {
 
     private boolean active;
-    private MenuOption title;
-    private MenuOption[] options;
+    private int leftOffset = 1;
 
-    private BitmapFont font = new BitmapFont();
-    private SpriteBatch batch = new SpriteBatch();
+    private float fontScale = 0.4f;
+    private BitmapFont font;
 
-    //title section will ocupy a quarter of the screen (includes gap between top and the options below) and the options the rest
+    private Option selectedOption = Option.play;
+    private Option choosenOption = Option.none;
 
-    //the title itself will ocuppy three fifths of the title section
+    private String[] options = { "play", "exit" };
 
-    Menu(String titleContent){
+    Menu(String titleContent, Viewport viewport){
 
-        float sideOffset = 10;
+        super(viewport);
+        active = true;
 
-        active = false;
-        String[] optionsContent = { "play" };
+        //get font
+        font = new BitmapFont(Gdx.files.internal("pixelart.fnt"));
+        font.getData().setScale(fontScale);
 
-        //title
-
-        float titleSectionHeight = Gdx.graphics.getHeight()/ 4;
-
-        title = new MenuOption(
-                titleContent,
-                font,
-                sideOffset,
-                Gdx.graphics.getHeight() - titleSectionHeight/5,
-                0,
-                3*titleSectionHeight/5
+        addActor(
+                new Label(
+                        titleContent,
+                        new Label.LabelStyle(
+                            font,
+                            Color.WHITE
+                        )
+                )
         );
+
+        //set title bounds
+        getActors().get(0).setPosition(leftOffset,viewport.getCamera().viewportHeight - getActors().get(0).getHeight(), Align.topLeft);
     }
 
     boolean isActive(){
         return active;
     }
 
+    public Option getChoosenOption(){ return choosenOption; }
+
     void update(){
-
-        batch.begin();
-
-        title.update(batch, false);
-
-        batch.end();
-    }
-
-    void dispose(){
-
-        font.dispose();
-        batch.dispose();
+        super.setDebugAll(true);
+        super.draw();
     }
 }

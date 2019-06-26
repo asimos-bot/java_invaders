@@ -7,21 +7,32 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+
+import static com.mygdx.javainvaders.Option.play;
+
+enum GameState{
+
+  playing,
+  menu,
+  death
+};
 
 public class JavaInvaders extends ApplicationAdapter {
 
     //Box2D
     private World world; //box2d world object (handle the physics interactions in our game)
 
-    //menu
+    //game world
     private Menu menu;
-
+    private GameState gameState = GameState.menu;
 
     //entities
     private Spaceship spaceship;
     private AsteroidGenerator asteroidGenerator;
 
-    private Box2DDebugRenderer debugRenderer;
+    //rendering stuff
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
 
@@ -29,23 +40,24 @@ public class JavaInvaders extends ApplicationAdapter {
     public void create() {
         // world
         world = new World(new Vector2(0, 0f), true);
+
         // camera and renderers
         camera = new OrthographicCamera(64, 48);
+        ScalingViewport viewport = new ScalingViewport(Scaling.stretch, 64, 48, camera);
         camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
-//        camera.zoom += 10f;
-        debugRenderer = new Box2DDebugRenderer(true, true, false, true, false, true);
+
         shapeRenderer = new ShapeRenderer();
 
         spaceship = new Spaceship(world, camera.viewportWidth / 2, camera.viewportHeight / 2);
 
         asteroidGenerator = new AsteroidGenerator(world,
                 camera,
-                40,
+                20,
                 new Vector2(4, 8),
                 new Vector2(3, 8)
         );
 
-        menu = new Menu("Java Invaders");
+        menu = new Menu("Java Invaders", viewport);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -102,12 +114,32 @@ public class JavaInvaders extends ApplicationAdapter {
         // draw entities
         asteroidGenerator.update(shapeRenderer);
 
-        if( !menu.isActive() ) {
-            spaceship.update(shapeRenderer, camera);
-        }else{
-            menu.update();
+        //game state dependent
+        switch(gameState){
+
+            case playing:
+
+                spaceship.update(shapeRenderer, camera);
+                break;
+            case menu:
+
+                menu.update();
+                //update gameState if necessary
+                switch( menu.getChoosenOption() ){
+
+                    case play:
+                        gameState = GameState.playing;
+                        break;
+                    case exit:
+                        Gdx.app.exit();
+                        break;
+                }
+                break;
+
+            case death:
+
+                break;
         }
-        debugRenderer.render(world, camera.combined);
 
     }
 
@@ -120,7 +152,6 @@ public class JavaInvaders extends ApplicationAdapter {
 
         //free memory
         world.dispose();
-        debugRenderer.dispose();
         menu.dispose();
     }
 }
