@@ -20,10 +20,12 @@ public class Menu extends Stage {
 
     private Label title;
     private MenuOption playButton, exitButton;
+    private Viewport viewport;
 
     Menu(String titleContent, Viewport viewport){
 
         super(viewport);
+        this.viewport = viewport;
 
         //generate skin (the thing that store the styles used in our table)
         //NOTE: skin keep track of its resources by using the given name and also the type!
@@ -76,6 +78,7 @@ public class Menu extends Stage {
 
     GameState update(){
         //setDebugAll(true);
+
         super.draw();
         super.act(); //poll events in actors
 
