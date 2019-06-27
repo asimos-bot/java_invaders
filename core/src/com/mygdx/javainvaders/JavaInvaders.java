@@ -10,13 +10,11 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 
-import static com.mygdx.javainvaders.Option.play;
-
 enum GameState{
 
-  playing,
-  menu,
-  death
+    playing,
+    start_menu,
+    death
 };
 
 public class JavaInvaders extends ApplicationAdapter {
@@ -26,7 +24,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
     //game world
     private Menu menu;
-    private GameState gameState = GameState.menu;
+    GameState state = GameState.start_menu;
 
     //entities
     private Spaceship spaceship;
@@ -57,7 +55,8 @@ public class JavaInvaders extends ApplicationAdapter {
                 new Vector2(3, 8)
         );
 
-        menu = new Menu("Java Invaders", viewport);
+        menu = new Menu("Java Invaders", viewport, state);
+        Gdx.input.setInputProcessor(menu);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -115,25 +114,15 @@ public class JavaInvaders extends ApplicationAdapter {
         asteroidGenerator.update(shapeRenderer);
 
         //game state dependent
-        switch(gameState){
+        switch(state){
 
             case playing:
 
                 spaceship.update(shapeRenderer, camera);
                 break;
-            case menu:
+            case start_menu:
 
-                menu.update();
-                //update gameState if necessary
-                switch( menu.getChoosenOption() ){
-
-                    case play:
-                        gameState = GameState.playing;
-                        break;
-                    case exit:
-                        Gdx.app.exit();
-                        break;
-                }
+                state = menu.update();
                 break;
 
             case death:
