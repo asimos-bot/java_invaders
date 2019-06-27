@@ -168,7 +168,7 @@ public class Spaceship extends SpaceEntity {
         //update game state
         if( health < 0 ){
 
-            return GameState.death;
+            return GameState.pre_death_end;
         }
         return GameState.playing;
     }

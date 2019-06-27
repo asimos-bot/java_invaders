@@ -1,36 +1,38 @@
 package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class Menu extends Stage {
-
-    private float fontScale = 0.4f;
-    private BitmapFont font;
-    private Skin skin;
+public class DeathScreen extends Stage {
 
     private Label title;
-    private MenuOption playButton, exitButton;
+    private Label scoreLabel;
+    private MenuOption playAgainButton;
+    private MenuOption menuButton;
+    private BitmapFont font;
+    private float fontScale = 0.4f;
 
-    Menu(String titleContent, Viewport viewport){
+    private Skin skin;
+
+    DeathScreen(int score, Viewport viewport){
 
         super(viewport);
 
-        //generate skin (the thing that store the styles used in our table)
-        //NOTE: skin keep track of its resources by using the given name and also the type!
-        skin = new Skin();
+        // Create a table that fills the screen. Everything else will go inside this table.
+        Table table = new Table();
+        table.setFillParent(true);
+        addActor(table);
 
-        font = new BitmapFont(Gdx.files.internal("pixelart.fnt"));
-        font.getData().setScale(fontScale);
+        skin = new Skin();
 
         // Generate a 1x1 white texture and store it in the skin named "white".
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -38,13 +40,11 @@ public class Menu extends Stage {
         //pixmap.fill();
         skin.add("white", new Texture(pixmap));
 
+        font = new BitmapFont(Gdx.files.internal("pixelart.fnt"));
+        font.getData().setScale(fontScale);
+
         //add font to skin
         skin.add("default", font);
-
-        // Create a table that fills the screen. Everything else will go inside this table.
-        Table table = new Table();
-        table.setFillParent(true);
-        addActor(table);
 
         //textButtonStyle (for buttons)
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
@@ -59,19 +59,24 @@ public class Menu extends Stage {
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.RED);
         skin.add("default", labelStyle);
 
+        //add score
+        scoreLabel = new Label(Integer.toString(score), skin);
+        table.add(scoreLabel);
+        table.row().fill();
+
         //add title
-        title = new Label(titleContent, skin);
+        title = new Label("game over", skin);
         table.add(title);
         table.row().fill();
 
         //add play option and its listeners
-        playButton = new MenuOption("play", new TextButton.TextButtonStyle(textButtonStyle));
-        table.add(playButton);
+        playAgainButton = new MenuOption("play again", new TextButton.TextButtonStyle(textButtonStyle));
+        table.add(playAgainButton);
         table.row().fill();
 
         //add exit option
-        exitButton = new MenuOption("exit", new TextButton.TextButtonStyle(textButtonStyle));
-        table.add(exitButton);
+        menuButton = new MenuOption("menu", new TextButton.TextButtonStyle(textButtonStyle));
+        table.add(menuButton);
     }
 
     GameState update(){
@@ -80,14 +85,15 @@ public class Menu extends Stage {
         super.act(); //poll events in actors
 
         //check if game state need updating
-        if( playButton.getPress() ){
-
+        if( playAgainButton.getPress() ){
+            dispose();
             return GameState.pre_playing;
 
-        }else if( exitButton.getPress() ){
-            Gdx.app.exit();
+        }else if( menuButton.getPress() ){
+            dispose();
+            return GameState.pre_start_menu;
         }
-        return GameState.start_menu;
+        return GameState.death_end;
     }
 
     @Override

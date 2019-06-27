@@ -2,12 +2,9 @@ package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -41,6 +38,14 @@ public class Score extends Stage {
     public void addScore(int number){
 
         scoreNumber+=number;
+    }
+
+    public int getScore(){
+        return scoreNumber;
+    }
+
+    public void reset(){
+        scoreNumber=0;
     }
 
     public void update(){

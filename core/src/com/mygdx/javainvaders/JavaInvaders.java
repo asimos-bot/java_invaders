@@ -12,10 +12,13 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 
 enum GameState{
 
+    pre_playing,
     playing,
     animating,
     start_menu,
-    death
+    pre_start_menu,
+    pre_death_end,
+    death_end
 };
 
 public class JavaInvaders extends ApplicationAdapter {
@@ -25,7 +28,8 @@ public class JavaInvaders extends ApplicationAdapter {
 
     //game world
     private Menu menu;
-    GameState state = GameState.start_menu;
+    GameState state = GameState.pre_start_menu;
+    private DeathScreen death;
 
     //entities
     private Spaceship spaceship;
@@ -35,6 +39,7 @@ public class JavaInvaders extends ApplicationAdapter {
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     private Score score;
+    private ScalingViewport viewport;
 
     @Override
     public void create() {
@@ -77,7 +82,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
         // camera and renderers
         camera = new OrthographicCamera(64, 48);
-        ScalingViewport viewport = new ScalingViewport(Scaling.stretch, 64, 48, camera);
+        viewport = new ScalingViewport(Scaling.stretch, 64, 48, camera);
         camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
 
         //score
@@ -85,9 +90,6 @@ public class JavaInvaders extends ApplicationAdapter {
 
         //game objects
         shapeRenderer = new ShapeRenderer();
-
-        spaceship = new Spaceship(world, camera);
-
         asteroidGenerator = new AsteroidGenerator(world,
                 camera,
                 20,
@@ -97,8 +99,6 @@ public class JavaInvaders extends ApplicationAdapter {
 
         //menu
         menu = new Menu("Java Invaders", viewport);
-        Gdx.input.setInputProcessor(menu);
-
     }
 
     @Override
@@ -119,18 +119,29 @@ public class JavaInvaders extends ApplicationAdapter {
         //game state dependent
         switch(state){
 
+            case pre_playing:
+                //make spaceship reference to a new one
+                spaceship = new Spaceship(world, camera);
+                score.reset();
             case playing:
-
                 score.update();
                 state = spaceship.update(shapeRenderer, camera);
                 break;
+
+            case pre_start_menu:
+                Gdx.input.setInputProcessor(menu);
+                state = GameState.start_menu;
             case start_menu:
 
                 state = menu.update();
                 break;
 
-            case death:
-
+            case pre_death_end:
+                death = new DeathScreen(score.getScore(), viewport);
+                Gdx.input.setInputProcessor(death);
+                state = GameState.death_end;
+            case death_end:
+                state = death.update();
                 break;
         }
 
