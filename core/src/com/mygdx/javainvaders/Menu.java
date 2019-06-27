@@ -21,16 +21,12 @@ public class Menu extends Stage {
     private BitmapFont font;
     private Skin skin;
 
-    private GameState state;
-
     private Label title;
     private MenuOption playButton, exitButton;
 
-    Menu(String titleContent, Viewport viewport, GameState state){
+    Menu(String titleContent, Viewport viewport){
 
         super(viewport);
-
-        this.state = state;
 
         //generate skin (the thing that store the styles used in our table)
         //NOTE: skin keep track of its resources by using the given name and also the type!
@@ -89,16 +85,13 @@ public class Menu extends Stage {
         //check if game state need updating
         if( playButton.getPress() ){
 
-            return this.state = GameState.playing;
+            return GameState.playing;
+
         }else if( exitButton.getPress() ){
 
             Gdx.app.exit();
         }
-        return this.state;
-    }
-
-    public void setState(GameState state){
-        this.state = state;
+        return GameState.start_menu;
     }
 
     @Override

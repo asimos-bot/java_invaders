@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 enum GameState{
 
     playing,
+    animating,
     start_menu,
     death
 };
@@ -33,30 +34,12 @@ public class JavaInvaders extends ApplicationAdapter {
     //rendering stuff
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
+    private Score score;
 
     @Override
     public void create() {
         // world
         world = new World(new Vector2(0, 0f), true);
-
-        // camera and renderers
-        camera = new OrthographicCamera(64, 48);
-        ScalingViewport viewport = new ScalingViewport(Scaling.stretch, 64, 48, camera);
-        camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
-
-        shapeRenderer = new ShapeRenderer();
-
-        spaceship = new Spaceship(world, camera.viewportWidth / 2, camera.viewportHeight / 2);
-
-        asteroidGenerator = new AsteroidGenerator(world,
-                camera,
-                20,
-                new Vector2(4, 8),
-                new Vector2(3, 8)
-        );
-
-        menu = new Menu("Java Invaders", viewport, state);
-        Gdx.input.setInputProcessor(menu);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -69,12 +52,11 @@ public class JavaInvaders extends ApplicationAdapter {
 
                 SpaceEntity EntityA = (SpaceEntity) bodyA.getUserData();
                 SpaceEntity EntityB = (SpaceEntity) bodyB.getUserData();
-                if (EntityA.getClass().getName().equals("com.mygdx.javainvaders.Bullet") || EntityB.getClass().getName().equals("com.mygdx.javainvaders.Bullet")) {
-                    damage *= 7;
-                }
 
                 EntityA.health -= damage;
                 EntityB.health -= damage;
+
+                if(state == GameState.playing) score.addScore((int)damage);
             }
 
             @Override
@@ -93,6 +75,30 @@ public class JavaInvaders extends ApplicationAdapter {
             }
         });
 
+        // camera and renderers
+        camera = new OrthographicCamera(64, 48);
+        ScalingViewport viewport = new ScalingViewport(Scaling.stretch, 64, 48, camera);
+        camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
+
+        //score
+        score = new Score(viewport);
+
+        //game objects
+        shapeRenderer = new ShapeRenderer();
+
+        spaceship = new Spaceship(world, camera);
+
+        asteroidGenerator = new AsteroidGenerator(world,
+                camera,
+                20,
+                new Vector2(4, 8),
+                new Vector2(3, 8)
+        );
+
+        //menu
+        menu = new Menu("Java Invaders", viewport);
+        Gdx.input.setInputProcessor(menu);
+
     }
 
     @Override
@@ -110,15 +116,13 @@ public class JavaInvaders extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.identity();
 
-        // draw entities
-        asteroidGenerator.update(shapeRenderer);
-
         //game state dependent
         switch(state){
 
             case playing:
 
-                spaceship.update(shapeRenderer, camera);
+                score.update();
+                state = spaceship.update(shapeRenderer, camera);
                 break;
             case start_menu:
 
@@ -130,6 +134,8 @@ public class JavaInvaders extends ApplicationAdapter {
                 break;
         }
 
+        //draw asteroids
+        asteroidGenerator.update(shapeRenderer);
     }
 
     public void logicStep(float delta) {
@@ -142,5 +148,6 @@ public class JavaInvaders extends ApplicationAdapter {
         //free memory
         world.dispose();
         menu.dispose();
+        score.dispose();
     }
 }

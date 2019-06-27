@@ -14,7 +14,14 @@ public class SpaceEntity {
     protected float[] shape;
     protected float health;
 
+    protected SpaceEntity(){}
+
     protected SpaceEntity(World world, float initialX, float initialY){
+
+        create(world, initialX, initialY);
+    }
+
+    protected void create(World world, float initialX, float initialY){
 
         //create body definition
         BodyDef bodyDef = new BodyDef(); //create
@@ -27,6 +34,7 @@ public class SpaceEntity {
 
         health = body.getMass() * 5;
     }
+
     protected SpaceEntity(World world, Vector2 initialPosition){
 
         this( world, initialPosition.x, initialPosition.y );

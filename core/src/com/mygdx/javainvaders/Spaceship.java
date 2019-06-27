@@ -20,11 +20,17 @@ public class Spaceship extends SpaceEntity {
     private long bulletTime = System.currentTimeMillis();
 
     private World world;
-
+    private Camera camera;
+    private GameState state = GameState.animating;
 
     //just call SpaceEntity class constructor
-    Spaceship(World world, float initialX, float initialY) {
-        super(world, initialX, initialY);
+    Spaceship(World world, Camera camera) {
+        this.world = world;
+        this.camera = camera;
+    }
+
+    void create(){
+        super.create(world, camera.viewportWidth/2, camera.viewportHeight/2);
         this.world = world;
         body.setAngularDamping(8f); //how long it takes to stop the rotation basically
         body.setLinearDamping(0.5f);
@@ -127,8 +133,14 @@ public class Spaceship extends SpaceEntity {
         }
     }
 
-    void update(ShapeRenderer shapeRenderer, Camera cam) {
+    GameState update(ShapeRenderer shapeRenderer, Camera cam) {
 //        if( health < 0 ) System.out.println("you are dead");
+
+        if( state == GameState.animating ){
+            create();
+            state = GameState.playing;
+            return GameState.playing;
+        }
 
         inputHandling(cam);
         borderTeletransportation(cam);
@@ -152,5 +164,12 @@ public class Spaceship extends SpaceEntity {
             this.bullets.remove(b);
             world.destroyBody(b.body);
         }
+
+        //update game state
+        if( health < 0 ){
+
+            return GameState.death;
+        }
+        return GameState.playing;
     }
 }
