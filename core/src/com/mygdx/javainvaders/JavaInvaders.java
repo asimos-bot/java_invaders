@@ -21,6 +21,7 @@ public class JavaInvaders extends ApplicationAdapter {
     //entities
     private Spaceship spaceship;
     private Asteroid asteroid;
+    private AsteroidGenerator asteroidGenerator;
 
     private Box2DDebugRenderer debugRenderer;
     private OrthographicCamera camera;
@@ -40,6 +41,45 @@ public class JavaInvaders extends ApplicationAdapter {
         spaceship = new Spaceship(world, camera.viewportWidth/2, camera.viewportHeight/2);
         asteroid = new Asteroid(world, 20, 20);
         asteroid.defineAsteroid(8, 3f, 12f);
+        asteroidGenerator = new AsteroidGenerator(world,
+                  5,
+                  2000,
+                  new Vector2(6, 8),
+                  new Vector2(30, 100)
+          );
+
+      world.setContactListener(new ContactListener() {
+        @Override
+        public void beginContact(Contact contact) {
+
+          Body bodyA = contact.getFixtureA().getBody();
+                  Body bodyB = contact.getFixtureB().getBody();
+
+                  float damage = contact.getWorldManifold().getNormal().len2();
+
+                  SpaceEntity EntityA = (SpaceEntity)bodyA.getUserData();
+                  SpaceEntity EntityB = (SpaceEntity)bodyB.getUserData();
+
+                  EntityA.health -= damage;
+                  EntityB.health -= damage;
+        }
+
+        @Override
+        public void endContact(Contact contact) {
+
+        }
+
+        @Override
+        public void preSolve(Contact contact, Manifold oldManifold) {
+
+        }
+
+        @Override
+        public void postSolve(Contact contact, ContactImpulse impulse) {
+
+        }
+      });
+    }
     }
 
     @Override
@@ -52,13 +92,14 @@ public class JavaInvaders extends ApplicationAdapter {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glDisable(GL20.GL_BLEND);
+
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.identity();
 
         // draw entities
         spaceship.update(shapeRenderer, camera);
-
+        asteroidGenerator.update();
         debugRenderer.render(world, camera.combined);
 
     }
@@ -70,7 +111,8 @@ public class JavaInvaders extends ApplicationAdapter {
     @Override
     public void dispose() {
 
-        //free memory
-        world.dispose();
-    }
+		//free memory
+		world.dispose();
+		debugRenderer.dispose();
+	}
 }
