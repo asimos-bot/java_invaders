@@ -1,5 +1,6 @@
 package com.mygdx.javainvaders;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class SpaceEntity {
+abstract public class SpaceEntity {
 
     protected Body body;
     protected float[] shape;
@@ -78,6 +79,9 @@ public class SpaceEntity {
         shapeRenderer.end();
 
     }
+
+    abstract GameState update(ShapeRenderer shapeRenderer, Camera camera);
+
     float getHealth(){ return health; }
 
     protected void rotate(float angularVelocity){

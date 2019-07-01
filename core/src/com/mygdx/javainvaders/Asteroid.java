@@ -1,5 +1,7 @@
 package com.mygdx.javainvaders;
 
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -164,5 +166,11 @@ public class Asteroid extends SpaceEntity {
         }
 
         return childs;
+    }
+
+    @Override
+    GameState update(ShapeRenderer shapeRenderer, Camera camera){
+
+        return GameState.playing;
     }
 }

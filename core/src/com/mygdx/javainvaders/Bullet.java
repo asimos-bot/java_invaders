@@ -2,6 +2,7 @@ package com.mygdx.javainvaders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Bullet extends SpaceEntity {
@@ -44,6 +45,10 @@ public class Bullet extends SpaceEntity {
         return false;
     }
 
-
+    @Override
+    GameState update(ShapeRenderer shapeRenderer, Camera camera){
+        draw(shapeRenderer);
+        return GameState.playing;
+    }
 
 }

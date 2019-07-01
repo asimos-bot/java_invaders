@@ -134,7 +134,6 @@ public class Spaceship extends SpaceEntity {
     }
 
     GameState update(ShapeRenderer shapeRenderer, Camera cam) {
-//        if( health < 0 ) System.out.println("you are dead");
 
         if( state == GameState.animating ){
             create();
@@ -152,7 +151,7 @@ public class Spaceship extends SpaceEntity {
                 deadBullets.add(b); // Kill bullets
                 continue;
             }
-            b.draw(shapeRenderer);
+            b.update(shapeRenderer, camera);
             float angle = b.body.getAngle();
             float x = Bullet.throttle * (float) -Math.sin(angle);
             float y = Bullet.throttle * (float) Math.cos(angle);
@@ -167,7 +166,7 @@ public class Spaceship extends SpaceEntity {
 
         //update game state
         if( health < 0 ){
-
+            body.getWorld().destroyBody(body);
             return GameState.pre_death_end;
         }
         return GameState.playing;
