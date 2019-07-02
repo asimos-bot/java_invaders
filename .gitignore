@@ -131,8 +131,8 @@ Thumbs.db
 /ios-moe/xcode/native/
 /build.gradle
 /gradlew
-core/assets/
 /settings.gradle
 /desktop/build.gradle
 /gradle/wrapper/gradle-wrapper.jar
 /gradle/wrapper/gradle-wrapper.properties
+output/
