@@ -13,6 +13,7 @@ public class Bullet extends SpaceEntity {
     Bullet(World world, float initialX, float initialY){
         super(world, initialX, initialY);
         initHealth = this.health;
+        damageMult = 3f;
         body.setAngularDamping(500);
         body.setLinearDamping(0.0f);
 

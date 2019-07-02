@@ -13,6 +13,7 @@ public class SpaceEntity {
     protected Body body;
     protected float[] shape;
     protected float health;
+    protected float damageMult = 1f;
 
     protected SpaceEntity(){}
 

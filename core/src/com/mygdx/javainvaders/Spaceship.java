@@ -23,10 +23,13 @@ public class Spaceship extends SpaceEntity {
     private Camera camera;
     private GameState state = GameState.animating;
 
+    private boolean THREAD_FLAG = false;
+
     //just call SpaceEntity class constructor
-    Spaceship(World world, Camera camera) {
+    Spaceship(World world, Camera camera, boolean tf) {
         this.world = world;
         this.camera = camera;
+        this.THREAD_FLAG = tf;
     }
 
     void create(){
@@ -67,7 +70,11 @@ public class Spaceship extends SpaceEntity {
 
         //do pewpew
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            pewpew();
+            try {
+                pewpew();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
 
         /*
@@ -87,7 +94,11 @@ public class Spaceship extends SpaceEntity {
             }
 
             //always shoot (temporary, don't know best way to do it yet (divide screen in three?))
-            pewpew();
+            try {
+                pewpew();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
 
             //choose action
             if (left && right) {
@@ -120,17 +131,19 @@ public class Spaceship extends SpaceEntity {
     }
 
     // Does pewpew to shoot sum of dat assteroidzzzzz
-    private void pewpew() {
-        if (this.bullets.size() < this.maxBullets && System.currentTimeMillis() - this.bulletTime >= this.bulletInterval) {
-            float angle = this.body.getAngle();
-            float x = this.body.getPosition().x + 3* (float) -Math.sin(angle);
-            float y = this.body.getPosition().y + 3* (float) Math.cos(angle);
-            com.mygdx.javainvaders.Bullet b = new com.mygdx.javainvaders.Bullet(this.world, x, y);
-            b.body.setTransform(x, y, angle);
-            b.body.setLinearVelocity(20* (float) -Math.sin(angle), 20 * (float) Math.cos(angle));
-            this.bullets.add(b);
-            this.bulletTime = System.currentTimeMillis();
+    private void pewpew() throws  Exception{
+        if (!(this.bullets.size() < this.maxBullets && System.currentTimeMillis() - this.bulletTime >= this.bulletInterval)) {
+            throw new Exception("Bullet Timer Error");
         }
+        float angle = this.body.getAngle();
+        float x = this.body.getPosition().x + 3* (float) -Math.sin(angle);
+        float y = this.body.getPosition().y + 3* (float) Math.cos(angle);
+        com.mygdx.javainvaders.Bullet b = new com.mygdx.javainvaders.Bullet(this.world, x, y);
+        b.body.setTransform(x, y, angle);
+        b.body.setLinearVelocity(20* (float) -Math.sin(angle), 20 * (float) Math.cos(angle));
+        this.bullets.add(b);
+        this.bulletTime = System.currentTimeMillis();
+
     }
 
     GameState update(ShapeRenderer shapeRenderer, Camera cam) {
@@ -146,24 +159,59 @@ public class Spaceship extends SpaceEntity {
         borderTeletransportation(cam);
         draw(shapeRenderer);
 
-        List<com.mygdx.javainvaders.Bullet> deadBullets = new ArrayList<com.mygdx.javainvaders.Bullet>();
-        for (Bullet b : this.bullets) {
-            if (b.pewpewdeath(cam)){
-                deadBullets.add(b); // Kill bullets
-                continue;
+//        List<com.mygdx.javainvaders.Bullet> deadBullets = new ArrayList<com.mygdx.javainvaders.Bullet>();
+
+
+        if (this.THREAD_FLAG) {
+            // Check which bullets are dead with MULTI THREADING WOW
+            List<Bullet> b1 = bullets.subList(0, bullets.size()/2);
+            List<Bullet> b2 = bullets.subList(bullets.size()/2, bullets.size());
+            BulletRunnable br1 = new BulletRunnable(b1, cam);
+            BulletRunnable br2 = new BulletRunnable(b2, cam);
+            br1.start();
+            br2.start();
+            try {
+                br1.t.join();
+                br2.t.join();
+            } catch ( InterruptedException e ) {
+                System.out.println(e);
             }
-            b.draw(shapeRenderer);
-            float angle = b.body.getAngle();
-            float x = Bullet.throttle * (float) -Math.sin(angle);
-            float y = Bullet.throttle * (float) Math.cos(angle);
-            b.body.applyForceToCenter(x, y, true);
 
+            List<Bullet> deadBullets = br1.deadBullets;
+            deadBullets.addAll(br2.deadBullets);
+            for (Bullet b : deadBullets) {
+                this.bullets.remove(b);
+                world.destroyBody(b.body);
+            }
+            for (Bullet b : this.bullets) {
+                b.draw(shapeRenderer);
+                float angle = b.body.getAngle();
+                float x = Bullet.throttle * (float) -Math.sin(angle);
+                float y = Bullet.throttle * (float) Math.cos(angle);
+                b.body.applyForceToCenter(x, y, true);
+
+            }
+        } else {
+            List<com.mygdx.javainvaders.Bullet> deadBullets = new ArrayList<com.mygdx.javainvaders.Bullet>();
+            for (Bullet b : this.bullets) {
+                if (b.pewpewdeath(cam)){
+                    deadBullets.add(b); // Kill bullets
+                    continue;
+                }
+                b.draw(shapeRenderer);
+                float angle = b.body.getAngle();
+                float x = Bullet.throttle * (float) -Math.sin(angle);
+                float y = Bullet.throttle * (float) Math.cos(angle);
+                b.body.applyForceToCenter(x, y, true);
+
+            }
+
+            for (Bullet b : deadBullets) {
+                this.bullets.remove(b);
+                world.destroyBody(b.body);
+            }
         }
 
-        for (Bullet b : deadBullets) {
-            this.bullets.remove(b);
-            world.destroyBody(b.body);
-        }
 
         //update game state
         if( health < 0 ){

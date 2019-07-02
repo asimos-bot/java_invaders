@@ -58,8 +58,8 @@ public class JavaInvaders extends ApplicationAdapter {
                 SpaceEntity EntityA = (SpaceEntity) bodyA.getUserData();
                 SpaceEntity EntityB = (SpaceEntity) bodyB.getUserData();
 
-                EntityA.health -= damage;
-                EntityB.health -= damage;
+                EntityA.health -= damage * EntityB.damageMult;
+                EntityB.health -= damage * EntityA.damageMult;
 
                 if(state == GameState.playing) score.addScore((int)damage);
             }
@@ -81,8 +81,8 @@ public class JavaInvaders extends ApplicationAdapter {
         });
 
         // camera and renderers
-        camera = new OrthographicCamera(64, 48);
-        viewport = new ScalingViewport(Scaling.stretch, 64, 48, camera);
+        camera = new OrthographicCamera(128, 96);
+        viewport = new ScalingViewport(Scaling.stretch, 128, 48, camera);
         camera.translate(camera.viewportWidth / 2, camera.viewportHeight / 2);
 
         //score
@@ -121,7 +121,7 @@ public class JavaInvaders extends ApplicationAdapter {
 
             case pre_playing:
                 //make spaceship reference to a new one
-                spaceship = new Spaceship(world, camera);
+                spaceship = new Spaceship(world, camera, false);
                 score.reset();
             case playing:
                 score.update();

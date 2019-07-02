@@ -18,6 +18,7 @@ public class Asteroid extends SpaceEntity {
         super(world, initialX, initialY);
 
         this.numVertices = numVertices;
+        health *= 2;
 
         body.setAngularDamping(0); //spinning for daaaaaaaays
         body.setLinearDamping(0);
